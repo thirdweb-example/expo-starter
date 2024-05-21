@@ -10,7 +10,7 @@ import {
 	useConnect,
 	useSendTransaction,
 } from "thirdweb/react";
-import { claimTo, totalSupply } from "thirdweb/extensions/erc721";
+import { balanceOf, claimTo, totalSupply } from "thirdweb/extensions/erc721";
 import { inAppWallet } from "thirdweb/wallets/in-app";
 import { chain, client, contract } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
@@ -106,6 +106,11 @@ function ConnectSection() {
 function WriteSection() {
 	const account = useActiveAccount();
 	const sendMutation = useSendTransaction();
+	const balanceQuery = useReadContract(balanceOf, {
+		contract,
+		owner: account!.address,
+		queryOptions: { enabled: !!account },
+	});
 
 	const mint = async () => {
 		if (!account) return;
@@ -122,7 +127,18 @@ function WriteSection() {
 		<>
 			{account ? (
 				<>
-					<ThemedText>Wallet: {shortenAddress(account.address)}</ThemedText>
+					<ThemedText>
+						Wallet:{" "}
+						<ThemedText type="defaultSemiBold">
+							{shortenAddress(account.address)}
+						</ThemedText>
+					</ThemedText>
+					<ThemedText>
+						NFTs owned:{" "}
+						<ThemedText type="defaultSemiBold">
+							{balanceQuery.data?.toString()}
+						</ThemedText>
+					</ThemedText>
 					<ThemedButton
 						onPress={mint}
 						title="Mint"
