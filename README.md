@@ -17,7 +17,13 @@ It showcases the usage of:
 yarn install
 ```
 
-2. Start the app
+2. Get your thirdweb client id
+
+Rename the `.env.example` file to `.env` and paste in your thirdweb client id.
+
+You can obtain a free client id from the [thirdweb dashboard](https://thirdweb.com/dashboard/settings).
+
+3. Start the app
 
 ```bash
 yarn ios
