@@ -1,3 +1,4 @@
+![Group 1](https://github.com/thirdweb-example/thirdweb-auth-express/assets/17715009/06383e68-9c65-4265-8505-e88e573443f9)
 # thirdweb expo starter
 
 This is a working example of a onchain react native app built with thirdweb and expo.
