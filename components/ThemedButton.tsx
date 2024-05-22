@@ -16,30 +16,44 @@ export type ThemedButtonProps = {
 	title: string;
 	loading?: boolean;
 	loadingTitle?: string;
+	variant?: "primary" | "secondary";
 };
 
 export function ThemedButton(props: ThemedButtonProps) {
+	const variant = props.variant ?? "primary";
 	const bg = useThemeColor(
 		{ light: props.lightColor, dark: props.darkColor },
 		"tint",
 	);
-	const text = useThemeColor(
+	const textInverted = useThemeColor(
 		{ light: props.lightColor, dark: props.darkColor },
 		"textInverted",
 	);
+	const text = useThemeColor(
+		{ light: props.lightColor, dark: props.darkColor },
+		"text",
+	);
+	const textColor = variant == "secondary" ? text : textInverted;
 	return (
 		<TouchableOpacity
 			disabled={props.loading}
 			activeOpacity={0.5}
-			style={[styles.button, { backgroundColor: bg }]}
+			style={[
+				styles.button,
+				{
+					borderColor: variant == "secondary" ? bg : "transparent",
+					borderWidth: variant == "secondary" ? 1 : 0,
+					backgroundColor: variant == "secondary" ? "transparent" : bg,
+				},
+			]}
 			onPress={(e) => {
 				props.onPress?.(e);
 			}}
 		>
 			{props.loading && (
-				<ActivityIndicator animating={props.loading} color={text} />
+				<ActivityIndicator animating={props.loading} color={textColor} />
 			)}
-			<ThemedText type="defaultSemiBold" style={{ color: text }}>
+			<ThemedText type="defaultSemiBold" style={{ color: textColor }}>
 				{props.loading ? props.loadingTitle : props.title}
 			</ThemedText>
 		</TouchableOpacity>

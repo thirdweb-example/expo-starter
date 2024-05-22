@@ -22,3 +22,5 @@ expo-env.d.ts
 .env
 .env.local
 biome.json
+.yalc/
+yalc.lock

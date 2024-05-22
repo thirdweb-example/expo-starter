@@ -1,4 +1,10 @@
-import { Image, StyleSheet } from "react-native";
+import {
+	ActivityIndicator,
+	Image,
+	StyleSheet,
+	TextInput,
+	View,
+} from "react-native";
 
 import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
@@ -9,12 +15,17 @@ import {
 	useActiveAccount,
 	useConnect,
 	useSendTransaction,
+	useSetActiveWallet,
+	useDisconnect,
+	useActiveWallet,
 } from "thirdweb/react";
 import { balanceOf, claimTo, totalSupply } from "thirdweb/extensions/erc721";
-import { inAppWallet } from "thirdweb/wallets/in-app";
+import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
 import { chain, client, contract } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
+import { useEffect, useState } from "react";
+import { ThemedInput } from "@/components/ThemedInput";
 
 export default function HomeScreen() {
 	return (
@@ -64,7 +75,75 @@ function ReadSection() {
 }
 
 function ConnectSection() {
-	const account = useActiveAccount();
+	const { disconnect } = useDisconnect();
+	const wallet = useActiveWallet();
+	const setActiveWallet = useSetActiveWallet();
+	const [autoConnecting, setAutoConnecting] = useState(true);
+
+	// auto connect if possible
+	useEffect(() => {
+		let active = true;
+		const autoConnect = async () => {
+			if (!active) {
+				return;
+			}
+			setAutoConnecting(true);
+			const wallet = inAppWallet({
+				smartAccount: {
+					chain,
+					sponsorGas: true,
+				},
+			});
+			try {
+				await wallet.autoConnect({
+					client,
+					chain,
+				});
+				setActiveWallet(wallet);
+				setAutoConnecting(false);
+			} catch (e) {
+				setAutoConnecting(false);
+			}
+		};
+		autoConnect();
+		return () => {
+			active = false;
+		};
+	}, []);
+
+	if (autoConnecting) {
+		return (
+			<>
+				<ActivityIndicator />
+			</>
+		);
+	}
+
+	return (
+		<ThemedView style={styles.stepContainer}>
+			<ThemedText type="subtitle">Onchain write</ThemedText>
+			{wallet ? (
+				<>
+					<WriteSection />
+					<ThemedButton
+						title="Log out"
+						variant="secondary"
+						onPress={() => disconnect(wallet)}
+					/>
+				</>
+			) : (
+				<>
+					<ThemedText>Sign in to access your in-app wallet</ThemedText>
+					<ConnectWithGoogle />
+					<ThemedText style={{ textAlign: "center" }}>or</ThemedText>
+					<ConnectWithPhoneNumber />
+				</>
+			)}
+		</ThemedView>
+	);
+}
+
+function ConnectWithGoogle() {
 	const { connect, isConnecting } = useConnect();
 
 	const connectInAppWallet = async () => {
@@ -83,23 +162,98 @@ function ConnectSection() {
 			return wallet;
 		});
 	};
+
 	return (
-		<ThemedView style={styles.stepContainer}>
-			<ThemedText type="subtitle">Onchain write</ThemedText>
-			{account ? (
-				<WriteSection />
-			) : (
-				<>
-					<ThemedText>Sign in to access your in-app wallet</ThemedText>
-					<ThemedButton
-						onPress={connectInAppWallet}
-						title="Sign in with Google"
-						loading={isConnecting}
-						loadingTitle="Signing in..."
-					/>
-				</>
-			)}
-		</ThemedView>
+		<>
+			<ThemedButton
+				onPress={connectInAppWallet}
+				title="Sign in with Google"
+				loading={isConnecting}
+				loadingTitle="Signing in..."
+			/>
+		</>
+	);
+}
+
+function ConnectWithPhoneNumber() {
+	const [screen, setScreen] = useState<"phone" | "sending" | "code">("phone");
+	const [phoneNumber, setPhoneNumber] = useState("");
+	const [verificationCode, setVerificationCode] = useState("");
+	const { connect, isConnecting } = useConnect();
+
+	const sendSmsCode = async () => {
+		if (!phoneNumber) return;
+		setScreen("sending");
+		await preAuthenticate({
+			client,
+			strategy: "phone",
+			phoneNumber,
+		});
+		setScreen("code");
+	};
+
+	const connectInAppWallet = async () => {
+		if (!verificationCode || !phoneNumber) return;
+		await connect(async () => {
+			const wallet = inAppWallet({
+				smartAccount: {
+					chain,
+					sponsorGas: true,
+				},
+			});
+			await wallet.connect({
+				client,
+				strategy: "phone",
+				phoneNumber,
+				verificationCode,
+			});
+			return wallet;
+		});
+	};
+
+	if (screen === "phone") {
+		return (
+			<>
+				<ThemedInput
+					placeholder="Enter phone number"
+					onChangeText={setPhoneNumber}
+					value={phoneNumber}
+					keyboardType="phone-pad"
+				/>
+				<ThemedButton
+					onPress={sendSmsCode}
+					title="Sign in with phone number"
+					loading={isConnecting}
+					loadingTitle="Signing in..."
+				/>
+			</>
+		);
+	}
+
+	if (screen === "sending") {
+		return (
+			<>
+				<ActivityIndicator />
+				<ThemedText>Sending SMS code...</ThemedText>
+			</>
+		);
+	}
+
+	return (
+		<>
+			<ThemedInput
+				placeholder="Enter verification code"
+				onChangeText={setVerificationCode}
+				value={verificationCode}
+				keyboardType="numeric"
+			/>
+			<ThemedButton
+				onPress={connectInAppWallet}
+				title="Sign in"
+				loading={isConnecting}
+				loadingTitle="Signing in..."
+			/>
+		</>
 	);
 }
 
@@ -108,7 +262,7 @@ function WriteSection() {
 	const sendMutation = useSendTransaction();
 	const balanceQuery = useReadContract(balanceOf, {
 		contract,
-		owner: account!.address,
+		owner: account?.address!,
 		queryOptions: { enabled: !!account },
 	});
 

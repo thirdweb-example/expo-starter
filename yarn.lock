@@ -5572,15 +5572,14 @@
   dependencies:
     "@tanstack/query-core" "5.29.0"
 
-"@thirdweb-dev/react-native-adapter@^1.1.0-nightly-53dd1bfc1b71ec6375a0c0ce77ab7b0abbdd014c-20240521223830":
-  version "1.1.0-nightly-53dd1bfc1b71ec6375a0c0ce77ab7b0abbdd014c-20240521223830"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react-native-adapter/-/react-native-adapter-1.1.0-nightly-53dd1bfc1b71ec6375a0c0ce77ab7b0abbdd014c-20240521223830.tgz#04ac39523dc017496fb5e04719bf119b340ff96f"
-  integrity sha512-orD2vZGTB9AkMDK6MUALABs7t+H4GM20JjSQa3of3Q20JKJYH92J72A+ne3rpIthV40P8sjnO9GpQcpk86KBbw==
+"@thirdweb-dev/react-native-adapter@^1.1.0-nightly-49aa6e41d5df93204821b72f17f1ba5c3cfe41f7-20240522015623":
+  version "1.1.0-nightly-49aa6e41d5df93204821b72f17f1ba5c3cfe41f7-20240522015623"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react-native-adapter/-/react-native-adapter-1.1.0-nightly-49aa6e41d5df93204821b72f17f1ba5c3cfe41f7-20240522015623.tgz#fce9848f58b4445b4a997e404a7ecc8fb9781b5e"
+  integrity sha512-dW0Jj/VyC8/jaPp2Dw3NnjyUoldT5nZbHELPuWRs56LQP0GPfanK/ICy9LZoXSag5McqfDSmpSab6OzbqyR+sw==
   dependencies:
     "@aws-sdk/client-lambda" "3.577.0"
     "@aws-sdk/credential-providers" "3.577.0"
     "@walletconnect/react-native-compat" "2.13.0"
-    amazon-cognito-identity-js "6.3.12"
     aws-amplify "5.3.18"
     shamir-secret-sharing "0.0.3"
 
@@ -6224,10 +6223,10 @@ ajv@^8.0.0, ajv@^8.9.0:
     require-from-string "^2.0.2"
     uri-js "^4.4.1"
 
-amazon-cognito-identity-js@6.3.12:
-  version "6.3.12"
-  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-6.3.12.tgz#af73df033094ad4c679c19cf6122b90058021619"
-  integrity sha512-s7NKDZgx336cp+oDeUtB2ZzT8jWJp/v2LWuYl+LQtMEODe22RF1IJ4nRiDATp+rp1pTffCZcm44Quw4jx2bqNg==
+amazon-cognito-identity-js@6.3.13:
+  version "6.3.13"
+  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-6.3.13.tgz#887e42077c4bac9ac66be5a63d81325a7416c5cb"
+  integrity sha512-AOROAQHQYvXYnhzhB9L1cZdz+linq/xaPTBfXhvXsx1tyhbbzmA7HX8Ap3mKBPsjsG8UWfzDhdRCb7hmH3S14A==
   dependencies:
     "@aws-crypto/sha256-js" "1.2.2"
     buffer "4.9.2"
@@ -6235,10 +6234,10 @@ amazon-cognito-identity-js@6.3.12:
     isomorphic-unfetch "^3.0.0"
     js-cookie "^2.2.1"
 
-amazon-cognito-identity-js@6.3.13:
-  version "6.3.13"
-  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-6.3.13.tgz#887e42077c4bac9ac66be5a63d81325a7416c5cb"
-  integrity sha512-AOROAQHQYvXYnhzhB9L1cZdz+linq/xaPTBfXhvXsx1tyhbbzmA7HX8Ap3mKBPsjsG8UWfzDhdRCb7hmH3S14A==
+amazon-cognito-identity-js@^6.3.12:
+  version "6.3.12"
+  resolved "https://registry.yarnpkg.com/amazon-cognito-identity-js/-/amazon-cognito-identity-js-6.3.12.tgz#af73df033094ad4c679c19cf6122b90058021619"
+  integrity sha512-s7NKDZgx336cp+oDeUtB2ZzT8jWJp/v2LWuYl+LQtMEODe22RF1IJ4nRiDATp+rp1pTffCZcm44Quw4jx2bqNg==
   dependencies:
     "@aws-crypto/sha256-js" "1.2.2"
     buffer "4.9.2"
@@ -13025,10 +13024,10 @@ thenify-all@^1.0.0:
   dependencies:
     any-promise "^1.0.0"
 
-thirdweb@^5.23.0-nightly-53dd1bfc1b71ec6375a0c0ce77ab7b0abbdd014c-20240521223830:
-  version "5.23.0-nightly-53dd1bfc1b71ec6375a0c0ce77ab7b0abbdd014c-20240521223830"
-  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.23.0-nightly-53dd1bfc1b71ec6375a0c0ce77ab7b0abbdd014c-20240521223830.tgz#5a45e683cc7cf9bea84f960cd0afb9ebbca35712"
-  integrity sha512-XVIPdVLV2c+XipZXOdrpz09xlUO1t0gThoRmUzl2CoNi3AvXGZOGZJodEwylr+jJDHJjtnv1zfpwtxI94wKtMA==
+thirdweb@^5.23.0-nightly-49aa6e41d5df93204821b72f17f1ba5c3cfe41f7-20240522015623:
+  version "5.23.0-nightly-49aa6e41d5df93204821b72f17f1ba5c3cfe41f7-20240522015623"
+  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.23.0-nightly-49aa6e41d5df93204821b72f17f1ba5c3cfe41f7-20240522015623.tgz#c1a65266ecfc2a6bdba25ff4e4be38780632197a"
+  integrity sha512-nlTF4UJ/E3iI4s63zXbgn27i1/a83rQwmBfAQBRWlyrrD1XxKj5J8ZCfY8kgpNtTqZl6uFeZq3nOakCdGm8UZQ==
   dependencies:
     "@coinbase/wallet-sdk" "4.0.0-rc.2"
     "@emotion/react" "11.11.4"
