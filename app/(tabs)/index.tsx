@@ -1,12 +1,5 @@
-import {
-	ActivityIndicator,
-	Image,
-	StyleSheet,
-	TextInput,
-	View,
-} from "react-native";
+import { ActivityIndicator, Image, StyleSheet } from "react-native";
 
-import { HelloWave } from "@/components/HelloWave";
 import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
@@ -15,17 +8,19 @@ import {
 	useActiveAccount,
 	useConnect,
 	useSendTransaction,
-	useSetActiveWallet,
 	useDisconnect,
 	useActiveWallet,
+	useAutoConnect,
+	useWalletBalance,
 } from "thirdweb/react";
-import { balanceOf, claimTo, totalSupply } from "thirdweb/extensions/erc721";
+import { balanceOf, claimTo } from "thirdweb/extensions/erc721";
 import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
 import { chain, client, contract } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ThemedInput } from "@/components/ThemedInput";
+import { createWallet } from "thirdweb/wallets";
 
 export default function HomeScreen() {
 	return (
@@ -39,77 +34,29 @@ export default function HomeScreen() {
 			}
 		>
 			<ThemedView style={styles.titleContainer}>
-				<HelloWave />
-				<ThemedText type="title">thirdweb native</ThemedText>
+				<ThemedText type="title">Connecting Wallets</ThemedText>
 			</ThemedView>
-			<ReadSection />
 			<ConnectSection />
 		</ParallaxScrollView>
-	);
-}
-
-function ReadSection() {
-	const nameQuery = useReadContract({
-		contract,
-		method: "function name() returns (string)",
-	});
-	const supplyQuery = useReadContract(totalSupply, {
-		contract,
-	});
-
-	return (
-		<ThemedView style={styles.stepContainer}>
-			<ThemedText type="subtitle">Onchain read</ThemedText>
-			<ThemedText>
-				Contract name:{" "}
-				<ThemedText type="defaultSemiBold">{nameQuery.data}</ThemedText>{" "}
-			</ThemedText>
-			<ThemedText>
-				Supply:{" "}
-				<ThemedText type="defaultSemiBold">
-					{supplyQuery.data?.toString()}
-				</ThemedText>{" "}
-			</ThemedText>
-		</ThemedView>
 	);
 }
 
 function ConnectSection() {
 	const { disconnect } = useDisconnect();
 	const wallet = useActiveWallet();
-	const setActiveWallet = useSetActiveWallet();
-	const [autoConnecting, setAutoConnecting] = useState(true);
-
-	// auto connect if possible
-	useEffect(() => {
-		let active = true;
-		const autoConnect = async () => {
-			if (!active) {
-				return;
-			}
-			setAutoConnecting(true);
-			const wallet = inAppWallet({
+	const autoConnect = useAutoConnect({
+		client,
+		wallets: [
+			inAppWallet({
 				smartAccount: {
 					chain,
 					sponsorGas: true,
 				},
-			});
-			try {
-				await wallet.autoConnect({
-					client,
-					chain,
-				});
-				setActiveWallet(wallet);
-				setAutoConnecting(false);
-			} catch (e) {
-				setAutoConnecting(false);
-			}
-		};
-		autoConnect();
-		return () => {
-			active = false;
-		};
-	}, []);
+			}),
+			createWallet("io.metamask"),
+		],
+	});
+	const autoConnecting = autoConnect.isLoading;
 
 	if (autoConnecting) {
 		return (
@@ -121,10 +68,9 @@ function ConnectSection() {
 
 	return (
 		<ThemedView style={styles.stepContainer}>
-			<ThemedText type="subtitle">Onchain write</ThemedText>
 			{wallet ? (
 				<>
-					<WriteSection />
+					<ConnectedSection />
 					<ThemedButton
 						title="Log out"
 						variant="secondary"
@@ -132,17 +78,17 @@ function ConnectSection() {
 					/>
 				</>
 			) : (
-				<>
+				<ThemedView style={{ gap: 16 }}>
 					<ThemedText>Sign in to access your in-app wallet</ThemedText>
-					<ConnectWithGoogle />
-					<ThemedText style={{ textAlign: "center" }}>or</ThemedText>
 					<ConnectWithPhoneNumber />
-				</>
+					<ThemedText style={{ textAlign: "center" }}>or</ThemedText>
+					<ConnectWithGoogle />
+					<ConnectWithMetamask />
+				</ThemedView>
 			)}
 		</ThemedView>
 	);
 }
-
 function ConnectWithGoogle() {
 	const { connect, isConnecting } = useConnect();
 
@@ -257,48 +203,61 @@ function ConnectWithPhoneNumber() {
 	);
 }
 
-function WriteSection() {
-	const account = useActiveAccount();
-	const sendMutation = useSendTransaction();
-	const balanceQuery = useReadContract(balanceOf, {
-		contract,
-		owner: account?.address!,
-		queryOptions: { enabled: !!account },
-	});
+function ConnectWithMetamask() {
+	const { connect, isConnecting } = useConnect();
 
-	const mint = async () => {
-		if (!account) return;
-		await sendMutation.mutateAsync(
-			claimTo({
-				contract,
-				quantity: 1n,
-				to: account.address,
-			}),
-		);
+	const connectMetamask = async () => {
+		await connect(async () => {
+			const wallet = createWallet("io.metamask");
+			await wallet.connect({
+				client,
+				chain,
+			});
+			return wallet;
+		});
 	};
+
+	return (
+		<>
+			<ThemedButton
+				onPress={connectMetamask}
+				title="Sign in with Metamask"
+				loading={isConnecting}
+				loadingTitle="Signing in..."
+			/>
+		</>
+	);
+}
+
+function ConnectedSection() {
+	const account = useActiveAccount();
+	const wallet = useActiveWallet();
+	const balanceQuery = useWalletBalance({
+		address: account?.address,
+		chain,
+		client,
+	});
 
 	return (
 		<>
 			{account ? (
 				<>
 					<ThemedText>
-						Wallet:{" "}
+						Wallet type:{" "}
+						<ThemedText type="defaultSemiBold">{wallet?.id}</ThemedText>
+					</ThemedText>
+					<ThemedText>
+						Address:{" "}
 						<ThemedText type="defaultSemiBold">
 							{shortenAddress(account.address)}
 						</ThemedText>
 					</ThemedText>
 					<ThemedText>
-						NFTs owned:{" "}
+						Balance:{" "}
 						<ThemedText type="defaultSemiBold">
-							{balanceQuery.data?.toString()}
+							{`${balanceQuery.data?.displayValue} ${balanceQuery.data?.symbol}`}
 						</ThemedText>
 					</ThemedText>
-					<ThemedButton
-						onPress={mint}
-						title="Mint"
-						loading={sendMutation.isPending}
-						loadingTitle="Minting..."
-					/>
 				</>
 			) : (
 				<>

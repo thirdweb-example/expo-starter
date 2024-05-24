@@ -13,7 +13,11 @@ export function ThemedInput(props: ThemedInputProps) {
 		"icon",
 	);
 	return (
-		<TextInput style={[styles.input, { borderColor: border }]} {...props} />
+		<TextInput
+			style={[styles.input, { borderColor: border }]}
+			placeholderTextColor={border}
+			{...props}
+		/>
 	);
 }
 
@@ -22,7 +26,7 @@ const styles = StyleSheet.create({
 		flex: 1,
 		flexDirection: "row",
 		gap: 8,
-		padding: 8,
+		padding: 12,
 		borderRadius: 6,
 		borderWidth: 1,
 		borderStyle: "solid",

@@ -7,7 +7,10 @@ It showcases the usage of:
 
 - in-app wallets using phone number, email or social logins to create a wallet for the user
 - smart accounts to sponsor gas
-- reading and writing to the blockchain
+- connecting to external wallets like MetaMask via WalletConnect
+- autoconnecting to the last connected wallet on launch
+- reading contract state and events
+- writing to the blockchain
 
 ## Get started
 
