@@ -14,11 +14,15 @@ import {
 	useWalletBalance,
 } from "thirdweb/react";
 import { balanceOf, claimTo } from "thirdweb/extensions/erc721";
-import { inAppWallet, preAuthenticate } from "thirdweb/wallets/in-app";
+import {
+	getUserEmail,
+	inAppWallet,
+	preAuthenticate,
+} from "thirdweb/wallets/in-app";
 import { chain, client, contract } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ThemedInput } from "@/components/ThemedInput";
 import { createWallet } from "thirdweb/wallets";
 
@@ -237,6 +241,22 @@ function ConnectedSection() {
 		chain,
 		client,
 	});
+	const [email, setEmail] = useState("");
+	useEffect(() => {
+		const fetchEmail = async () => {
+			try {
+				const email = await getUserEmail({
+					client,
+				});
+				if (email) {
+					setEmail(email);
+				}
+			} catch (e) {
+				console.error(e);
+			}
+		};
+		fetchEmail();
+	}, [account]);
 
 	return (
 		<>
@@ -244,7 +264,8 @@ function ConnectedSection() {
 				<>
 					<ThemedText>
 						Wallet type:{" "}
-						<ThemedText type="defaultSemiBold">{wallet?.id}</ThemedText>
+						<ThemedText type="defaultSemiBold">{wallet?.id}</ThemedText>{" "}
+						{email && <ThemedText> ({email})</ThemedText>}
 					</ThemedText>
 					<ThemedText>
 						Address:{" "}
