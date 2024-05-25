@@ -1,7 +1,7 @@
 {
 	"expo": {
-		"name": "expo-starter",
-		"slug": "expo-starter",
+		"name": "thirdweb playground",
+		"slug": "thirdweb-playground",
 		"version": "1.0.0",
 		"orientation": "portrait",
 		"icon": "./assets/images/icon.png",
@@ -31,6 +31,15 @@
 		"plugins": ["expo-router"],
 		"experiments": {
 			"typedRoutes": true
-		}
+		},
+		"extra": {
+			"router": {
+				"origin": false
+			},
+			"eas": {
+				"projectId": "d1d7acaf-b44a-4425-af35-620596448499"
+			}
+		},
+		"owner": "joaquim-thirdweb"
 	}
 }

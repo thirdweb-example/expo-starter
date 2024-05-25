@@ -71,7 +71,7 @@ function EventsSection() {
 		<ThemedView style={styles.stepContainer}>
 			<ThemedText type="subtitle">Contract events</ThemedText>
 			<ThemedText>
-				Live events:{" "}
+				Live transfer events:{" "}
 				<ThemedText type="defaultSemiBold">{nameQuery.data}</ThemedText>{" "}
 			</ThemedText>
 			<ThemedView style={{ height: 4 }} />
@@ -82,9 +82,8 @@ function EventsSection() {
 					return (
 						<ThemedView key={`${event.transactionHash}${i}`} style={{ gap: 4 }}>
 							<ThemedText>
-								New payment:{" "}
 								<ThemedText type="defaultSemiBold">
-									{toTokens(event.args.value, 6)} USDC
+									💰 {toTokens(event.args.value, 6)} USDC
 								</ThemedText>{" "}
 							</ThemedText>
 							<ThemedText style={{ fontSize: 14 }}>
