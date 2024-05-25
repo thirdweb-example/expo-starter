@@ -21,7 +21,7 @@ export default function TabLayout() {
 					title: "Connect",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "home" : "home-outline"}
+							name={focused ? "wallet" : "wallet-outline"}
 							color={color}
 						/>
 					),
@@ -33,7 +33,7 @@ export default function TabLayout() {
 					title: "Read",
 					tabBarIcon: ({ color, focused }) => (
 						<TabBarIcon
-							name={focused ? "code-slash" : "code-slash-outline"}
+							name={focused ? "reader" : "reader-outline"}
 							color={color}
 						/>
 					),

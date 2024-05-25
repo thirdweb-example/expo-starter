@@ -13,6 +13,7 @@ import { client, contract } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { resolveScheme } from "thirdweb/storage";
 import { ThemedButton } from "@/components/ThemedButton";
+import { Link } from "expo-router";
 
 export default function HomeScreen() {
 	return (
@@ -105,7 +106,12 @@ function WriteSection() {
 				</>
 			) : (
 				<>
-					<ThemedText>Connect a wallet to perform transactions</ThemedText>
+					<ThemedText>
+						<Link href="(tabs)">
+							<ThemedText type="link">Connect</ThemedText>
+						</Link>{" "}
+						a wallet to perform transactions
+					</ThemedText>
 				</>
 			)}
 		</>
