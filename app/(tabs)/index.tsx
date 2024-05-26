@@ -1,30 +1,30 @@
 import { ActivityIndicator, Image, StyleSheet } from "react-native";
 
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import {
-	useReadContract,
 	useActiveAccount,
 	useConnect,
-	useSendTransaction,
 	useDisconnect,
 	useActiveWallet,
 	useAutoConnect,
 	useWalletBalance,
+	useConnectedWallets,
+	useSetActiveWallet,
 } from "thirdweb/react";
-import { balanceOf, claimTo } from "thirdweb/extensions/erc721";
 import {
 	getUserEmail,
 	inAppWallet,
 	preAuthenticate,
 } from "thirdweb/wallets/in-app";
-import { chain, client, contract } from "@/constants/thirdweb";
+import { chain, client } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
 import { useEffect, useState } from "react";
 import { ThemedInput } from "@/components/ThemedInput";
 import { createWallet } from "thirdweb/wallets";
+import { polygon } from "thirdweb/chains";
 
 export default function HomeScreen() {
 	return (
@@ -46,7 +46,6 @@ export default function HomeScreen() {
 }
 
 function ConnectSection() {
-	const { disconnect } = useDisconnect();
 	const wallet = useActiveWallet();
 	const autoConnect = useAutoConnect({
 		client,
@@ -58,6 +57,7 @@ function ConnectSection() {
 				},
 			}),
 			createWallet("io.metamask"),
+			createWallet("me.rainbow"),
 		],
 	});
 	const autoConnecting = autoConnect.isLoading;
@@ -75,11 +75,6 @@ function ConnectSection() {
 			{wallet ? (
 				<>
 					<ConnectedSection />
-					<ThemedButton
-						title="Log out"
-						variant="secondary"
-						onPress={() => disconnect(wallet)}
-					/>
 				</>
 			) : (
 				<ThemedView style={{ gap: 16 }}>
@@ -233,12 +228,41 @@ function ConnectWithMetamask() {
 	);
 }
 
+function ConnectWithRainbow() {
+	const { connect, isConnecting } = useConnect();
+
+	const connectRainbow = async () => {
+		await connect(async () => {
+			const wallet = createWallet("me.rainbow");
+			await wallet.connect({
+				client,
+				chain: polygon,
+			});
+			return wallet;
+		});
+	};
+
+	return (
+		<>
+			<ThemedButton
+				onPress={connectRainbow}
+				title="Sign in with Rainbow"
+				loading={isConnecting}
+				loadingTitle="Signing in..."
+			/>
+		</>
+	);
+}
+
 function ConnectedSection() {
+	const { disconnect } = useDisconnect();
 	const account = useActiveAccount();
-	const wallet = useActiveWallet();
+	const activeWallet = useActiveWallet();
+	const setActive = useSetActiveWallet();
+	const connectedWallets = useConnectedWallets();
 	const balanceQuery = useWalletBalance({
 		address: account?.address,
-		chain,
+		chain: activeWallet?.getChain(),
 		client,
 	});
 	const [email, setEmail] = useState("");
@@ -252,7 +276,7 @@ function ConnectedSection() {
 					setEmail(email);
 				}
 			} catch (e) {
-				console.error(e);
+				// no email
 			}
 		};
 		fetchEmail();
@@ -263,9 +287,15 @@ function ConnectedSection() {
 			{account ? (
 				<>
 					<ThemedText>
-						Wallet type:{" "}
-						<ThemedText type="defaultSemiBold">{wallet?.id}</ThemedText>{" "}
+						Active Wallet:{" "}
+						<ThemedText type="defaultSemiBold">{activeWallet?.id}</ThemedText>{" "}
 						{email && <ThemedText> ({email})</ThemedText>}
+					</ThemedText>
+					<ThemedText>
+						Connected Wallets:{" "}
+						<ThemedText type="defaultSemiBold">
+							{connectedWallets.map((w) => w.id).join(", ")}
+						</ThemedText>
 					</ThemedText>
 					<ThemedText>
 						Address:{" "}
@@ -274,11 +304,43 @@ function ConnectedSection() {
 						</ThemedText>
 					</ThemedText>
 					<ThemedText>
-						Balance:{" "}
+						Chain:{" "}
 						<ThemedText type="defaultSemiBold">
-							{`${balanceQuery.data?.displayValue} ${balanceQuery.data?.symbol}`}
+							{activeWallet?.getChain()?.name || "Unknown"}
 						</ThemedText>
 					</ThemedText>
+					<ThemedText>
+						Balance:{" "}
+						{balanceQuery.data && (
+							<ThemedText type="defaultSemiBold">
+								{`${balanceQuery.data?.displayValue.slice(0, 8)} ${
+									balanceQuery.data?.symbol
+								}`}
+							</ThemedText>
+						)}
+					</ThemedText>
+					{connectedWallets.length == 1 ? (
+						<ConnectWithRainbow />
+					) : (
+						<WalletSwitcher />
+					)}
+					<ThemedButton
+						title="Log out"
+						variant="secondary"
+						onPress={async () => {
+							if (activeWallet) {
+								if (connectedWallets.length > 1) {
+									const nextWallet = connectedWallets.find(
+										(w) => w.id !== activeWallet?.id,
+									);
+									if (nextWallet) {
+										await setActive(nextWallet);
+									}
+								}
+								disconnect(activeWallet);
+							}
+						}}
+					/>
 				</>
 			) : (
 				<>
@@ -287,6 +349,21 @@ function ConnectedSection() {
 			)}
 		</>
 	);
+}
+
+function WalletSwitcher() {
+	const setActive = useSetActiveWallet();
+	const activeWallet = useActiveWallet();
+	const allWallets = useConnectedWallets();
+
+	const switchWallet = async () => {
+		const nextWallet = allWallets.find((w) => w.id !== activeWallet?.id);
+		if (nextWallet) {
+			await setActive(nextWallet);
+		}
+	};
+
+	return <ThemedButton title="Switch Wallet" onPress={switchWallet} />;
 }
 
 const styles = StyleSheet.create({
