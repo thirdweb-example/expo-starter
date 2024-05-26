@@ -1,6 +1,6 @@
 import { StyleSheet, Image } from "react-native";
 
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { useContractEvents, useReadContract } from "thirdweb/react";

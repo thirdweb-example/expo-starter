@@ -23,7 +23,7 @@ import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
 import { useEffect, useState } from "react";
 import { ThemedInput } from "@/components/ThemedInput";
-import { createWallet } from "thirdweb/wallets";
+import { createWallet, getWalletInfo } from "thirdweb/wallets";
 import { polygon } from "thirdweb/chains";
 
 export default function HomeScreen() {
@@ -83,6 +83,7 @@ function ConnectSection() {
 					<ThemedText style={{ textAlign: "center" }}>or</ThemedText>
 					<ConnectWithGoogle />
 					<ConnectWithMetamask />
+					<ConnectWithRainbow />
 				</ThemedView>
 			)}
 		</ThemedView>
@@ -282,6 +283,13 @@ function ConnectedSection() {
 		fetchEmail();
 	}, [account]);
 
+	const switchWallet = async () => {
+		const nextWallet = connectedWallets.find((w) => w.id !== activeWallet?.id);
+		if (nextWallet) {
+			await setActive(nextWallet);
+		}
+	};
+
 	return (
 		<>
 			{account ? (
@@ -319,10 +327,11 @@ function ConnectedSection() {
 							</ThemedText>
 						)}
 					</ThemedText>
-					{connectedWallets.length == 1 ? (
+					<ThemedView style={{ height: 12 }} />
+					{connectedWallets.length == 1 && activeWallet?.id == "io.metamask" ? (
 						<ConnectWithRainbow />
 					) : (
-						<WalletSwitcher />
+						<ThemedButton title="Switch Wallet" onPress={switchWallet} />
 					)}
 					<ThemedButton
 						title="Log out"
@@ -330,12 +339,7 @@ function ConnectedSection() {
 						onPress={async () => {
 							if (activeWallet) {
 								if (connectedWallets.length > 1) {
-									const nextWallet = connectedWallets.find(
-										(w) => w.id !== activeWallet?.id,
-									);
-									if (nextWallet) {
-										await setActive(nextWallet);
-									}
+									await switchWallet();
 								}
 								disconnect(activeWallet);
 							}
@@ -349,21 +353,6 @@ function ConnectedSection() {
 			)}
 		</>
 	);
-}
-
-function WalletSwitcher() {
-	const setActive = useSetActiveWallet();
-	const activeWallet = useActiveWallet();
-	const allWallets = useConnectedWallets();
-
-	const switchWallet = async () => {
-		const nextWallet = allWallets.find((w) => w.id !== activeWallet?.id);
-		if (nextWallet) {
-			await setActive(nextWallet);
-		}
-	};
-
-	return <ThemedButton title="Switch Wallet" onPress={switchWallet} />;
 }
 
 const styles = StyleSheet.create({
