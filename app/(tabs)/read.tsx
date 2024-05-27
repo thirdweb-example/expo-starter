@@ -1,4 +1,4 @@
-import { StyleSheet, Image } from "react-native";
+import { StyleSheet, Image, ActivityIndicator } from "react-native";
 
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -75,6 +75,7 @@ function EventsSection() {
 				<ThemedText type="defaultSemiBold">{nameQuery.data}</ThemedText>{" "}
 			</ThemedText>
 			<ThemedView style={{ height: 4 }} />
+			{eventsQuery.isLoading && <ActivityIndicator />}
 			{eventsQuery.data
 				?.slice(-10)
 				?.reverse()
