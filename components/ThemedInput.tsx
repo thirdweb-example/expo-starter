@@ -1,6 +1,7 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
 import { StyleSheet, TextInputProps, TextInput } from "react-native";
+import { ThemedView } from "./ThemedView";
 
 export type ThemedInputProps = {
 	lightColor?: string;
@@ -10,14 +11,10 @@ export type ThemedInputProps = {
 export function ThemedInput(props: ThemedInputProps) {
 	const border = useThemeColor(
 		{ light: props.lightColor, dark: props.darkColor },
-		"icon",
+		"border",
 	);
 	return (
-		<TextInput
-			style={[styles.input, { borderColor: border }]}
-			placeholderTextColor={border}
-			{...props}
-		/>
+		<TextInput style={[styles.input, { borderColor: border }]} {...props} />
 	);
 }
 

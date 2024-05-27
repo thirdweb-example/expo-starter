@@ -1,4 +1,10 @@
-import { ActivityIndicator, Image, Pressable, StyleSheet } from "react-native";
+import {
+	ActivityIndicator,
+	Image,
+	Pressable,
+	StyleSheet,
+	TouchableOpacity,
+} from "react-native";
 
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -21,16 +27,15 @@ import {
 import { chain, client } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { ThemedInput } from "@/components/ThemedInput";
 import {
+	InAppWalletSocialAuth,
 	Wallet,
-	WalletId,
 	createWallet,
 	getWalletInfo,
 } from "thirdweb/wallets";
-import { polygon } from "thirdweb/chains";
-import { isLoaded, isLoading } from "expo-font";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 const wallets = [
 	inAppWallet({
@@ -75,9 +80,9 @@ function ConnectSection() {
 
 	if (autoConnecting) {
 		return (
-			<>
+			<ThemedView style={{ padding: 24 }}>
 				<ActivityIndicator />
-			</>
+			</ThemedView>
 		);
 	}
 
@@ -90,8 +95,7 @@ function ConnectSection() {
 			) : (
 				<ThemedView style={{ gap: 16 }}>
 					<ThemedText type="defaultSemiBold">In-app wallet</ThemedText>
-					<ConnectWithPhoneNumber />
-					<ConnectWithGoogle />
+					<ConnectInAppWallet />
 					<ThemedView style={{ height: 12 }} />
 					<ThemedText type="defaultSemiBold">External wallet</ThemedText>
 					<ThemedView
@@ -110,9 +114,30 @@ function ConnectSection() {
 	);
 }
 
-function ConnectWithGoogle() {
-	const { connect, isConnecting } = useConnect();
+const oAuthOptions: InAppWalletSocialAuth[] = ["google", "facebook", "apple"];
 
+function ConnectInAppWallet() {
+	return (
+		<>
+			<ThemedView
+				style={{
+					flexDirection: "row",
+					gap: 24,
+				}}
+			>
+				{oAuthOptions.map((auth) => (
+					<ConnectWithSocial key={auth} auth={auth} />
+				))}
+			</ThemedView>
+			<ConnectWithPhoneNumber />
+		</>
+	);
+}
+
+function ConnectWithSocial(props: { auth: InAppWalletSocialAuth }) {
+	const bgColor = useThemeColor({}, "border");
+	const { connect, isConnecting } = useConnect();
+	const strategy = props.auth;
 	const connectInAppWallet = async () => {
 		await connect(async () => {
 			const wallet = inAppWallet({
@@ -123,7 +148,7 @@ function ConnectWithGoogle() {
 			});
 			await wallet.connect({
 				client,
-				strategy: "google",
+				strategy,
 				redirectUrl: "com.thirdweb.demo://",
 			});
 			return wallet;
@@ -131,14 +156,31 @@ function ConnectWithGoogle() {
 	};
 
 	return (
-		<>
-			<ThemedButton
-				onPress={connectInAppWallet}
-				title="Sign in with Google"
-				loading={isConnecting}
-				loadingTitle="Signing in..."
-			/>
-		</>
+		<ThemedView
+			style={{
+				flexDirection: "column",
+				alignItems: "center",
+				justifyContent: "center",
+				borderStyle: "solid",
+				borderWidth: 1,
+				borderColor: bgColor,
+				borderRadius: 6,
+				width: 60,
+				height: 60,
+			}}
+		>
+			{isConnecting ? (
+				<ActivityIndicator />
+			) : (
+				<TouchableOpacity
+					key={strategy}
+					onPress={connectInAppWallet}
+					disabled={isConnecting}
+				>
+					<Image source={getSocialIcon(strategy)} resizeMode="center" />
+				</TouchableOpacity>
+			)}
+		</ThemedView>
 	);
 }
 
@@ -335,13 +377,11 @@ function ConnectedSection() {
 						))}
 					</ThemedView>
 					<ThemedView style={{ height: 12 }} />
-					<ThemedText>
-						Active Wallet:{" "}
-						<ThemedText type="defaultSemiBold">{activeWallet?.id}</ThemedText>{" "}
-						{email && activeWallet?.id === "inApp" && (
-							<ThemedText> ({email})</ThemedText>
-						)}
-					</ThemedText>
+					{email && activeWallet?.id === "inApp" && (
+						<ThemedText>
+							Email: <ThemedText type="defaultSemiBold">{email}</ThemedText>
+						</ThemedText>
+					)}
 					<ThemedText>
 						Address:{" "}
 						<ThemedText type="defaultSemiBold">
@@ -425,3 +465,14 @@ const styles = StyleSheet.create({
 		position: "absolute",
 	},
 });
+
+function getSocialIcon(strategy: string) {
+	switch (strategy) {
+		case "google":
+			return require("@/assets/images/google.png");
+		case "facebook":
+			return require("@/assets/images/facebook.png");
+		case "apple":
+			return require("@/assets/images/apple.png");
+	}
+}
