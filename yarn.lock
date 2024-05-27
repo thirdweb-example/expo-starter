@@ -6213,7 +6213,7 @@ ajv@8.11.0:
     require-from-string "^2.0.2"
     uri-js "^4.2.2"
 
-ajv@^8.0.0, ajv@^8.9.0:
+ajv@^8.0.0, ajv@^8.11.0, ajv@^8.9.0:
   version "8.13.0"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.13.0.tgz#a3939eaec9fb80d217ddf0c3376948c023f28c91"
   integrity sha512-PRA911Blj99jR5RMeTunVbNXMF6Lp4vZXnk5GQjcnUWUTsrXtekg/pnmFFI2u/I36Y/2bITGS30GZCXei6uNkA==
@@ -8078,6 +8078,14 @@ expo-asset@~10.0.6:
     expo-constants "~16.0.0"
     invariant "^2.2.4"
     md5-file "^3.2.3"
+
+expo-build-properties@~0.12.1:
+  version "0.12.1"
+  resolved "https://registry.yarnpkg.com/expo-build-properties/-/expo-build-properties-0.12.1.tgz#8d11759b8f382e4654e2482ddcec4f9ad4530aad"
+  integrity sha512-gn8sngNmOHkbJ5Kt3mKcKg+Wl6+d0m70gg9OllRIVeDkvZqCObKfnSM4tAQWiJhm62sHnL8udfYnuArnKhQd/g==
+  dependencies:
+    ajv "^8.11.0"
+    semver "^7.6.0"
 
 expo-constants@~16.0.0, expo-constants@~16.0.1:
   version "16.0.1"
@@ -13024,10 +13032,10 @@ thenify-all@^1.0.0:
   dependencies:
     any-promise "^1.0.0"
 
-thirdweb@^5.24.0:
-  version "5.24.0"
-  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.24.0.tgz#06acb86433dfea06a57e2643cd03d1c2cc63589e"
-  integrity sha512-fTfJ9eqnVSNNF6srq0xvPH7VagavnwH24DHUrborufbs3CRcszliE7lVVQtl58KuO+onhWsaZpDF10hdEvAUSQ==
+thirdweb@0.0.0-dev-de9537fd0056331dee9d144489444d9bc2ba191f-20240526105215:
+  version "0.0.0-dev-de9537fd0056331dee9d144489444d9bc2ba191f-20240526105215"
+  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-0.0.0-dev-de9537fd0056331dee9d144489444d9bc2ba191f-20240526105215.tgz#d74de415d1dbe417fb03e4bbae365f7e18d83c4e"
+  integrity sha512-ez1PYo3vUGmeKYD+z+NBxgtBsi3MnwcG+UtH5XYAWow2H53rvusBZrOpBNzSgaVDocZxq8znsQuWhZavwad7RA==
   dependencies:
     "@coinbase/wallet-sdk" "4.0.0-rc.2"
     "@emotion/react" "11.11.4"

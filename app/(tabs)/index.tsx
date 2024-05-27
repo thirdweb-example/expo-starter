@@ -1,30 +1,55 @@
-import { ActivityIndicator, Image, StyleSheet } from "react-native";
+import {
+	ActivityIndicator,
+	Image,
+	Pressable,
+	StyleSheet,
+	TouchableOpacity,
+} from "react-native";
 
-import ParallaxScrollView from "@/components/ParallaxScrollView";
+import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import {
-	useReadContract,
 	useActiveAccount,
 	useConnect,
-	useSendTransaction,
 	useDisconnect,
 	useActiveWallet,
 	useAutoConnect,
 	useWalletBalance,
+	useConnectedWallets,
+	useSetActiveWallet,
 } from "thirdweb/react";
-import { balanceOf, claimTo } from "thirdweb/extensions/erc721";
 import {
 	getUserEmail,
 	inAppWallet,
 	preAuthenticate,
 } from "thirdweb/wallets/in-app";
-import { chain, client, contract } from "@/constants/thirdweb";
+import { chain, client } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
 import { useEffect, useState } from "react";
 import { ThemedInput } from "@/components/ThemedInput";
-import { createWallet } from "thirdweb/wallets";
+import {
+	InAppWalletSocialAuth,
+	Wallet,
+	createWallet,
+	getWalletInfo,
+} from "thirdweb/wallets";
+import { useThemeColor } from "@/hooks/useThemeColor";
+
+const wallets = [
+	inAppWallet({
+		smartAccount: {
+			chain,
+			sponsorGas: true,
+		},
+	}),
+	createWallet("io.metamask"),
+	createWallet("me.rainbow"),
+	createWallet("com.trustwallet.app"),
+	createWallet("io.zerion.wallet"),
+];
+const externalWallets = wallets.slice(1);
 
 export default function HomeScreen() {
 	return (
@@ -46,27 +71,18 @@ export default function HomeScreen() {
 }
 
 function ConnectSection() {
-	const { disconnect } = useDisconnect();
 	const wallet = useActiveWallet();
 	const autoConnect = useAutoConnect({
 		client,
-		wallets: [
-			inAppWallet({
-				smartAccount: {
-					chain,
-					sponsorGas: true,
-				},
-			}),
-			createWallet("io.metamask"),
-		],
+		wallets,
 	});
 	const autoConnecting = autoConnect.isLoading;
 
 	if (autoConnecting) {
 		return (
-			<>
+			<ThemedView style={{ padding: 24 }}>
 				<ActivityIndicator />
-			</>
+			</ThemedView>
 		);
 	}
 
@@ -75,27 +91,53 @@ function ConnectSection() {
 			{wallet ? (
 				<>
 					<ConnectedSection />
-					<ThemedButton
-						title="Log out"
-						variant="secondary"
-						onPress={() => disconnect(wallet)}
-					/>
 				</>
 			) : (
 				<ThemedView style={{ gap: 16 }}>
-					<ThemedText>Sign in to access your in-app wallet</ThemedText>
-					<ConnectWithPhoneNumber />
-					<ThemedText style={{ textAlign: "center" }}>or</ThemedText>
-					<ConnectWithGoogle />
-					<ConnectWithMetamask />
+					<ThemedText type="defaultSemiBold">In-app wallet</ThemedText>
+					<ConnectInAppWallet />
+					<ThemedView style={{ height: 12 }} />
+					<ThemedText type="defaultSemiBold">External wallet</ThemedText>
+					<ThemedView
+						style={{
+							flexDirection: "row",
+							gap: 24,
+						}}
+					>
+						{externalWallets.map((w) => (
+							<ConnectExternalWallet key={w.id} {...w} />
+						))}
+					</ThemedView>
 				</ThemedView>
 			)}
 		</ThemedView>
 	);
 }
-function ConnectWithGoogle() {
-	const { connect, isConnecting } = useConnect();
 
+const oAuthOptions: InAppWalletSocialAuth[] = ["google", "facebook", "apple"];
+
+function ConnectInAppWallet() {
+	return (
+		<>
+			<ThemedView
+				style={{
+					flexDirection: "row",
+					gap: 24,
+				}}
+			>
+				{oAuthOptions.map((auth) => (
+					<ConnectWithSocial key={auth} auth={auth} />
+				))}
+			</ThemedView>
+			<ConnectWithPhoneNumber />
+		</>
+	);
+}
+
+function ConnectWithSocial(props: { auth: InAppWalletSocialAuth }) {
+	const bgColor = useThemeColor({}, "border");
+	const { connect, isConnecting } = useConnect();
+	const strategy = props.auth;
 	const connectInAppWallet = async () => {
 		await connect(async () => {
 			const wallet = inAppWallet({
@@ -106,7 +148,7 @@ function ConnectWithGoogle() {
 			});
 			await wallet.connect({
 				client,
-				strategy: "google",
+				strategy,
 				redirectUrl: "com.thirdweb.demo://",
 			});
 			return wallet;
@@ -114,14 +156,31 @@ function ConnectWithGoogle() {
 	};
 
 	return (
-		<>
-			<ThemedButton
-				onPress={connectInAppWallet}
-				title="Sign in with Google"
-				loading={isConnecting}
-				loadingTitle="Signing in..."
-			/>
-		</>
+		<ThemedView
+			style={{
+				flexDirection: "column",
+				alignItems: "center",
+				justifyContent: "center",
+				borderStyle: "solid",
+				borderWidth: 1,
+				borderColor: bgColor,
+				borderRadius: 6,
+				width: 60,
+				height: 60,
+			}}
+		>
+			{isConnecting ? (
+				<ActivityIndicator />
+			) : (
+				<TouchableOpacity
+					key={strategy}
+					onPress={connectInAppWallet}
+					disabled={isConnecting}
+				>
+					<Image source={getSocialIcon(strategy)} resizeMode="center" />
+				</TouchableOpacity>
+			)}
+		</ThemedView>
 	);
 }
 
@@ -207,66 +266,122 @@ function ConnectWithPhoneNumber() {
 	);
 }
 
-function ConnectWithMetamask() {
-	const { connect, isConnecting } = useConnect();
+function ConnectExternalWallet(wallet: Wallet) {
+	const { connect, isConnecting, error } = useConnect();
+	const [walletName, setWalletName] = useState<string | null>(null);
+	const [walletImage, setWalletImage] = useState<string | null>(null);
 
-	const connectMetamask = async () => {
+	useEffect(() => {
+		const fetchWalletName = async () => {
+			const [name, image] = await Promise.all([
+				getWalletInfo(wallet.id).then((info) => info.name),
+				getWalletInfo(wallet.id, true),
+			]);
+			setWalletName(name);
+			setWalletImage(image);
+		};
+		fetchWalletName();
+	}, [wallet]);
+
+	const connectExternalWallet = async () => {
 		await connect(async () => {
-			const wallet = createWallet("io.metamask");
 			await wallet.connect({
 				client,
-				chain,
 			});
 			return wallet;
 		});
 	};
 
 	return (
-		<>
-			<ThemedButton
-				onPress={connectMetamask}
-				title="Sign in with Metamask"
-				loading={isConnecting}
-				loadingTitle="Signing in..."
-			/>
-		</>
+		walletImage &&
+		walletName && (
+			<ThemedView
+				style={{
+					flexDirection: "column",
+					alignItems: "center",
+				}}
+			>
+				{isConnecting && !error ? (
+					<ActivityIndicator style={{ width: 60, height: 60 }} />
+				) : (
+					<>
+						<Pressable onPress={connectExternalWallet} disabled={isConnecting}>
+							<Image
+								source={{ uri: walletImage ?? "" }}
+								style={{ width: 60, height: 60, borderRadius: 6 }}
+							/>
+						</Pressable>
+						<ThemedText style={{ fontSize: 11 }} type="defaultSemiBold">
+							{walletName}
+						</ThemedText>
+					</>
+				)}
+			</ThemedView>
+		)
 	);
 }
 
 function ConnectedSection() {
+	const { disconnect } = useDisconnect();
 	const account = useActiveAccount();
-	const wallet = useActiveWallet();
+	const activeWallet = useActiveWallet();
+	const setActive = useSetActiveWallet();
+	const connectedWallets = useConnectedWallets();
 	const balanceQuery = useWalletBalance({
 		address: account?.address,
-		chain,
+		chain: activeWallet?.getChain(),
 		client,
 	});
 	const [email, setEmail] = useState("");
 	useEffect(() => {
 		const fetchEmail = async () => {
-			try {
-				const email = await getUserEmail({
-					client,
-				});
-				if (email) {
-					setEmail(email);
+			if (activeWallet?.id === "inApp") {
+				try {
+					const email = await getUserEmail({
+						client,
+					});
+					if (email) {
+						setEmail(email);
+					}
+				} catch (e) {
+					// no email
 				}
-			} catch (e) {
-				console.error(e);
+			} else {
+				setEmail("");
 			}
 		};
 		fetchEmail();
 	}, [account]);
 
+	const switchWallet = async () => {
+		const activeIndex = connectedWallets.findIndex(
+			(w) => w.id === activeWallet?.id,
+		);
+		const nextWallet =
+			connectedWallets[(activeIndex + 1) % connectedWallets.length];
+		if (nextWallet) {
+			await setActive(nextWallet);
+		}
+	};
+
 	return (
 		<>
 			{account ? (
 				<>
-					<ThemedText>
-						Wallet type:{" "}
-						<ThemedText type="defaultSemiBold">{wallet?.id}</ThemedText>{" "}
-						{email && <ThemedText> ({email})</ThemedText>}
-					</ThemedText>
+					<ThemedText>Connected Wallets: </ThemedText>
+					<ThemedView style={{ gap: 2 }}>
+						{connectedWallets.map((w, i) => (
+							<ThemedText key={w.id + i} type="defaultSemiBold">
+								- {w.id} {w.id === activeWallet?.id ? "✅" : ""}
+							</ThemedText>
+						))}
+					</ThemedView>
+					<ThemedView style={{ height: 12 }} />
+					{email && activeWallet?.id === "inApp" && (
+						<ThemedText>
+							Email: <ThemedText type="defaultSemiBold">{email}</ThemedText>
+						</ThemedText>
+					)}
 					<ThemedText>
 						Address:{" "}
 						<ThemedText type="defaultSemiBold">
@@ -274,11 +389,54 @@ function ConnectedSection() {
 						</ThemedText>
 					</ThemedText>
 					<ThemedText>
-						Balance:{" "}
+						Chain:{" "}
 						<ThemedText type="defaultSemiBold">
-							{`${balanceQuery.data?.displayValue} ${balanceQuery.data?.symbol}`}
+							{activeWallet?.getChain()?.name || "Unknown"}
 						</ThemedText>
 					</ThemedText>
+					<ThemedText>
+						Balance:{" "}
+						{balanceQuery.data && (
+							<ThemedText type="defaultSemiBold">
+								{`${balanceQuery.data?.displayValue.slice(0, 8)} ${
+									balanceQuery.data?.symbol
+								}`}
+							</ThemedText>
+						)}
+					</ThemedText>
+					<ThemedView style={{ height: 12 }} />
+					{connectedWallets.length > 1 && (
+						<ThemedButton
+							variant="secondary"
+							title="Switch Wallet"
+							onPress={switchWallet}
+						/>
+					)}
+					<ThemedButton
+						title="Disconnect"
+						variant="secondary"
+						onPress={async () => {
+							if (activeWallet) {
+								disconnect(activeWallet);
+							}
+						}}
+					/>
+					<ThemedView style={{ height: 12 }} />
+					<ThemedText type="defaultSemiBold">Connect another wallet</ThemedText>
+					<ThemedView
+						style={{
+							flexDirection: "row",
+							gap: 24,
+						}}
+					>
+						{externalWallets
+							.filter(
+								(w) => !connectedWallets.map((cw) => cw.id).includes(w.id),
+							)
+							.map((w, i) => (
+								<ConnectExternalWallet key={w.id + i} {...w} />
+							))}
+					</ThemedView>
 				</>
 			) : (
 				<>
@@ -307,3 +465,14 @@ const styles = StyleSheet.create({
 		position: "absolute",
 	},
 });
+
+function getSocialIcon(strategy: string) {
+	switch (strategy) {
+		case "google":
+			return require("@/assets/images/google.png");
+		case "facebook":
+			return require("@/assets/images/facebook.png");
+		case "apple":
+			return require("@/assets/images/apple.png");
+	}
+}

@@ -24,3 +24,5 @@ expo-env.d.ts
 biome.json
 .yalc/
 yalc.lock
+android/
+ios/

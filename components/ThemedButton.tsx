@@ -1,7 +1,5 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
-import React from "react";
 import {
-	Pressable,
 	type PressableProps,
 	StyleSheet,
 	TouchableOpacity,
