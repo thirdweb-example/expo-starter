@@ -1,4 +1,4 @@
-import { ActivityIndicator, Image, StyleSheet } from "react-native";
+import { ActivityIndicator, Image, Pressable, StyleSheet } from "react-native";
 
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -21,10 +21,30 @@ import {
 import { chain, client } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ThemedInput } from "@/components/ThemedInput";
-import { createWallet, getWalletInfo } from "thirdweb/wallets";
+import {
+	Wallet,
+	WalletId,
+	createWallet,
+	getWalletInfo,
+} from "thirdweb/wallets";
 import { polygon } from "thirdweb/chains";
+import { isLoaded, isLoading } from "expo-font";
+
+const wallets = [
+	inAppWallet({
+		smartAccount: {
+			chain,
+			sponsorGas: true,
+		},
+	}),
+	createWallet("io.metamask"),
+	createWallet("me.rainbow"),
+	createWallet("com.trustwallet.app"),
+	createWallet("io.zerion.wallet"),
+];
+const externalWallets = wallets.slice(1);
 
 export default function HomeScreen() {
 	return (
@@ -49,16 +69,7 @@ function ConnectSection() {
 	const wallet = useActiveWallet();
 	const autoConnect = useAutoConnect({
 		client,
-		wallets: [
-			inAppWallet({
-				smartAccount: {
-					chain,
-					sponsorGas: true,
-				},
-			}),
-			createWallet("io.metamask"),
-			createWallet("me.rainbow"),
-		],
+		wallets,
 	});
 	const autoConnecting = autoConnect.isLoading;
 
@@ -78,17 +89,27 @@ function ConnectSection() {
 				</>
 			) : (
 				<ThemedView style={{ gap: 16 }}>
-					<ThemedText>Sign in to access your in-app wallet</ThemedText>
+					<ThemedText type="defaultSemiBold">In-app wallet</ThemedText>
 					<ConnectWithPhoneNumber />
-					<ThemedText style={{ textAlign: "center" }}>or</ThemedText>
 					<ConnectWithGoogle />
-					<ConnectWithMetamask />
-					<ConnectWithRainbow />
+					<ThemedView style={{ height: 12 }} />
+					<ThemedText type="defaultSemiBold">External wallet</ThemedText>
+					<ThemedView
+						style={{
+							flexDirection: "row",
+							gap: 24,
+						}}
+					>
+						{externalWallets.map((w) => (
+							<ConnectExternalWallet key={w.id} {...w} />
+						))}
+					</ThemedView>
 				</ThemedView>
 			)}
 		</ThemedView>
 	);
 }
+
 function ConnectWithGoogle() {
 	const { connect, isConnecting } = useConnect();
 
@@ -203,55 +224,58 @@ function ConnectWithPhoneNumber() {
 	);
 }
 
-function ConnectWithMetamask() {
-	const { connect, isConnecting } = useConnect();
+function ConnectExternalWallet(wallet: Wallet) {
+	const { connect, isConnecting, error } = useConnect();
+	const [walletName, setWalletName] = useState<string | null>(null);
+	const [walletImage, setWalletImage] = useState<string | null>(null);
 
-	const connectMetamask = async () => {
+	useEffect(() => {
+		const fetchWalletName = async () => {
+			const [name, image] = await Promise.all([
+				getWalletInfo(wallet.id).then((info) => info.name),
+				getWalletInfo(wallet.id, true),
+			]);
+			setWalletName(name);
+			setWalletImage(image);
+		};
+		fetchWalletName();
+	}, [wallet]);
+
+	const connectExternalWallet = async () => {
 		await connect(async () => {
-			const wallet = createWallet("io.metamask");
 			await wallet.connect({
 				client,
-				chain,
 			});
 			return wallet;
 		});
 	};
 
 	return (
-		<>
-			<ThemedButton
-				onPress={connectMetamask}
-				title="Sign in with Metamask"
-				loading={isConnecting}
-				loadingTitle="Signing in..."
-			/>
-		</>
-	);
-}
-
-function ConnectWithRainbow() {
-	const { connect, isConnecting } = useConnect();
-
-	const connectRainbow = async () => {
-		await connect(async () => {
-			const wallet = createWallet("me.rainbow");
-			await wallet.connect({
-				client,
-				chain: polygon,
-			});
-			return wallet;
-		});
-	};
-
-	return (
-		<>
-			<ThemedButton
-				onPress={connectRainbow}
-				title="Sign in with Rainbow"
-				loading={isConnecting}
-				loadingTitle="Signing in..."
-			/>
-		</>
+		walletImage &&
+		walletName && (
+			<ThemedView
+				style={{
+					flexDirection: "column",
+					alignItems: "center",
+				}}
+			>
+				{isConnecting && !error ? (
+					<ActivityIndicator style={{ width: 60, height: 60 }} />
+				) : (
+					<>
+						<Pressable onPress={connectExternalWallet} disabled={isConnecting}>
+							<Image
+								source={{ uri: walletImage ?? "" }}
+								style={{ width: 60, height: 60, borderRadius: 6 }}
+							/>
+						</Pressable>
+						<ThemedText style={{ fontSize: 11 }} type="defaultSemiBold">
+							{walletName}
+						</ThemedText>
+					</>
+				)}
+			</ThemedView>
+		)
 	);
 }
 
@@ -269,22 +293,30 @@ function ConnectedSection() {
 	const [email, setEmail] = useState("");
 	useEffect(() => {
 		const fetchEmail = async () => {
-			try {
-				const email = await getUserEmail({
-					client,
-				});
-				if (email) {
-					setEmail(email);
+			if (activeWallet?.id === "inApp") {
+				try {
+					const email = await getUserEmail({
+						client,
+					});
+					if (email) {
+						setEmail(email);
+					}
+				} catch (e) {
+					// no email
 				}
-			} catch (e) {
-				// no email
+			} else {
+				setEmail("");
 			}
 		};
 		fetchEmail();
 	}, [account]);
 
 	const switchWallet = async () => {
-		const nextWallet = connectedWallets.find((w) => w.id !== activeWallet?.id);
+		const activeIndex = connectedWallets.findIndex(
+			(w) => w.id === activeWallet?.id,
+		);
+		const nextWallet =
+			connectedWallets[(activeIndex + 1) % connectedWallets.length];
 		if (nextWallet) {
 			await setActive(nextWallet);
 		}
@@ -294,16 +326,21 @@ function ConnectedSection() {
 		<>
 			{account ? (
 				<>
+					<ThemedText>Connected Wallets: </ThemedText>
+					<ThemedView style={{ gap: 2 }}>
+						{connectedWallets.map((w, i) => (
+							<ThemedText key={w.id + i} type="defaultSemiBold">
+								- {w.id} {w.id === activeWallet?.id ? "✅" : ""}
+							</ThemedText>
+						))}
+					</ThemedView>
+					<ThemedView style={{ height: 12 }} />
 					<ThemedText>
 						Active Wallet:{" "}
 						<ThemedText type="defaultSemiBold">{activeWallet?.id}</ThemedText>{" "}
-						{email && <ThemedText> ({email})</ThemedText>}
-					</ThemedText>
-					<ThemedText>
-						Connected Wallets:{" "}
-						<ThemedText type="defaultSemiBold">
-							{connectedWallets.map((w) => w.id).join(", ")}
-						</ThemedText>
+						{email && activeWallet?.id === "inApp" && (
+							<ThemedText> ({email})</ThemedText>
+						)}
 					</ThemedText>
 					<ThemedText>
 						Address:{" "}
@@ -328,23 +365,38 @@ function ConnectedSection() {
 						)}
 					</ThemedText>
 					<ThemedView style={{ height: 12 }} />
-					{connectedWallets.length == 1 && activeWallet?.id == "io.metamask" ? (
-						<ConnectWithRainbow />
-					) : (
-						<ThemedButton title="Switch Wallet" onPress={switchWallet} />
+					{connectedWallets.length > 1 && (
+						<ThemedButton
+							variant="secondary"
+							title="Switch Wallet"
+							onPress={switchWallet}
+						/>
 					)}
 					<ThemedButton
-						title="Log out"
+						title="Disconnect"
 						variant="secondary"
 						onPress={async () => {
 							if (activeWallet) {
-								if (connectedWallets.length > 1) {
-									await switchWallet();
-								}
 								disconnect(activeWallet);
 							}
 						}}
 					/>
+					<ThemedView style={{ height: 12 }} />
+					<ThemedText type="defaultSemiBold">Connect another wallet</ThemedText>
+					<ThemedView
+						style={{
+							flexDirection: "row",
+							gap: 24,
+						}}
+					>
+						{externalWallets
+							.filter(
+								(w) => !connectedWallets.map((cw) => cw.id).includes(w.id),
+							)
+							.map((w, i) => (
+								<ConnectExternalWallet key={w.id + i} {...w} />
+							))}
+					</ThemedView>
 				</>
 			) : (
 				<>

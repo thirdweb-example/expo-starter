@@ -87,7 +87,7 @@ function WriteSection() {
 									uri: `${resolveScheme({
 										client,
 										uri: nftQuery.data.metadata.image || "",
-									})}?bundleId=com.thirdweb.demo`,
+									})}`,
 								}}
 							/>
 						</ThemedView>
