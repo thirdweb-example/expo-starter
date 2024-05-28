@@ -45,9 +45,13 @@ const wallets = [
 		},
 	}),
 	createWallet("io.metamask"),
+	createWallet("com.coinbase.wallet"),
 	createWallet("me.rainbow"),
 	createWallet("com.trustwallet.app"),
 	createWallet("io.zerion.wallet"),
+	createWallet("xyz.argent"),
+	createWallet("com.ledger"),
+	createWallet("com.alphawallet"),
 ];
 const externalWallets = wallets.slice(1);
 
@@ -98,12 +102,7 @@ function ConnectSection() {
 					<ConnectInAppWallet />
 					<ThemedView style={{ height: 12 }} />
 					<ThemedText type="defaultSemiBold">External wallet</ThemedText>
-					<ThemedView
-						style={{
-							flexDirection: "row",
-							gap: 24,
-						}}
-					>
+					<ThemedView style={styles.rowContainer}>
 						{externalWallets.map((w) => (
 							<ConnectExternalWallet key={w.id} {...w} />
 						))}
@@ -119,12 +118,7 @@ const oAuthOptions: InAppWalletSocialAuth[] = ["google", "facebook", "apple"];
 function ConnectInAppWallet() {
 	return (
 		<>
-			<ThemedView
-				style={{
-					flexDirection: "row",
-					gap: 24,
-				}}
-			>
+			<ThemedView style={[styles.rowContainer]}>
 				{oAuthOptions.map((auth) => (
 					<ConnectWithSocial key={auth} auth={auth} />
 				))}
@@ -158,6 +152,7 @@ function ConnectWithSocial(props: { auth: InAppWalletSocialAuth }) {
 	return (
 		<ThemedView
 			style={{
+				flex: 1,
 				flexDirection: "column",
 				alignItems: "center",
 				justifyContent: "center",
@@ -165,7 +160,6 @@ function ConnectWithSocial(props: { auth: InAppWalletSocialAuth }) {
 				borderWidth: 1,
 				borderColor: bgColor,
 				borderRadius: 6,
-				width: 60,
 				height: 60,
 			}}
 		>
@@ -185,19 +179,21 @@ function ConnectWithSocial(props: { auth: InAppWalletSocialAuth }) {
 }
 
 function ConnectWithPhoneNumber() {
-	const [screen, setScreen] = useState<"phone" | "sending" | "code">("phone");
+	const [screen, setScreen] = useState<"phone" | "code">("phone");
+	const [sendingOtp, setSendingOtp] = useState(false);
 	const [phoneNumber, setPhoneNumber] = useState("");
 	const [verificationCode, setVerificationCode] = useState("");
 	const { connect, isConnecting } = useConnect();
 
 	const sendSmsCode = async () => {
 		if (!phoneNumber) return;
-		setScreen("sending");
+		setSendingOtp(true);
 		await preAuthenticate({
 			client,
 			strategy: "phone",
 			phoneNumber,
 		});
+		setSendingOtp(false);
 		setScreen("code");
 	};
 
@@ -222,29 +218,14 @@ function ConnectWithPhoneNumber() {
 
 	if (screen === "phone") {
 		return (
-			<>
-				<ThemedInput
-					placeholder="Enter phone number"
-					onChangeText={setPhoneNumber}
-					value={phoneNumber}
-					keyboardType="phone-pad"
-				/>
-				<ThemedButton
-					onPress={sendSmsCode}
-					title="Sign in with phone number"
-					loading={isConnecting}
-					loadingTitle="Signing in..."
-				/>
-			</>
-		);
-	}
-
-	if (screen === "sending") {
-		return (
-			<>
-				<ActivityIndicator />
-				<ThemedText>Sending SMS code...</ThemedText>
-			</>
+			<ThemedInput
+				placeholder="Enter phone number"
+				onChangeText={setPhoneNumber}
+				value={phoneNumber}
+				keyboardType="phone-pad"
+				onSubmit={sendSmsCode}
+				isSubmitting={sendingOtp}
+			/>
 		);
 	}
 
@@ -255,12 +236,8 @@ function ConnectWithPhoneNumber() {
 				onChangeText={setVerificationCode}
 				value={verificationCode}
 				keyboardType="numeric"
-			/>
-			<ThemedButton
-				onPress={connectInAppWallet}
-				title="Sign in"
-				loading={isConnecting}
-				loadingTitle="Signing in..."
+				onSubmit={connectInAppWallet}
+				isSubmitting={isConnecting}
 			/>
 		</>
 	);
@@ -312,7 +289,7 @@ function ConnectExternalWallet(wallet: Wallet) {
 							/>
 						</Pressable>
 						<ThemedText style={{ fontSize: 11 }} type="defaultSemiBold">
-							{walletName}
+							{walletName.split(" ")[0]}
 						</ThemedText>
 					</>
 				)}
@@ -413,6 +390,15 @@ function ConnectedSection() {
 						/>
 					)}
 					<ThemedButton
+						title="Sign message"
+						variant="secondary"
+						onPress={async () => {
+							if (account) {
+								account.signMessage({ message: "hello world" });
+							}
+						}}
+					/>
+					<ThemedButton
 						title="Disconnect"
 						variant="secondary"
 						onPress={async () => {
@@ -423,12 +409,7 @@ function ConnectedSection() {
 					/>
 					<ThemedView style={{ height: 12 }} />
 					<ThemedText type="defaultSemiBold">Connect another wallet</ThemedText>
-					<ThemedView
-						style={{
-							flexDirection: "row",
-							gap: 24,
-						}}
-					>
+					<ThemedView style={styles.rowContainer}>
 						{externalWallets
 							.filter(
 								(w) => !connectedWallets.map((cw) => cw.id).includes(w.id),
@@ -463,6 +444,12 @@ const styles = StyleSheet.create({
 		bottom: 0,
 		left: 0,
 		position: "absolute",
+	},
+	rowContainer: {
+		flexDirection: "row",
+		flexWrap: "wrap",
+		gap: 24,
+		justifyContent: "space-evenly",
 	},
 });
 

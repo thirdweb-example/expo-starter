@@ -83,13 +83,10 @@ function EventsSection() {
 					return (
 						<ThemedView key={`${event.transactionHash}${i}`} style={{ gap: 4 }}>
 							<ThemedText>
+								{shortenAddress(event.args.from)} sent{" "}
 								<ThemedText type="defaultSemiBold">
-									💰 {toTokens(event.args.value, 6)} USDC
+									{toTokens(event.args.value, 6)} USDC
 								</ThemedText>{" "}
-							</ThemedText>
-							<ThemedText style={{ fontSize: 14 }}>
-								{shortenAddress(event.args.from)} ➡{" "}
-								{shortenAddress(event.args.to)}
 							</ThemedText>
 						</ThemedView>
 					);
