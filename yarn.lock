@@ -5589,10 +5589,10 @@
   dependencies:
     "@tanstack/query-core" "5.29.0"
 
-"@thirdweb-dev/react-native-adapter@0.0.0-dev-1ce88a8c7bec46055531a28e72078e7c4cedf693-20240528033310":
-  version "0.0.0-dev-1ce88a8c7bec46055531a28e72078e7c4cedf693-20240528033310"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react-native-adapter/-/react-native-adapter-0.0.0-dev-1ce88a8c7bec46055531a28e72078e7c4cedf693-20240528033310.tgz#bfdf5b67abe8b46de34ca08add699a8f64951ca3"
-  integrity sha512-ATJuZy7YgxT5rLR/mRIuaDjsVGZ11CVowFxM9BnCgWyStqBbhfd0BTyQpcYkuzYN0VLcFraQ1VbNs6XrsTwFxA==
+"@thirdweb-dev/react-native-adapter@^1.1.1":
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react-native-adapter/-/react-native-adapter-1.1.1.tgz#2a51965b16a46d882f2d86f9588bd747f96b4d8c"
+  integrity sha512-CFEDTy/Ejm2AdXqnj72Kjx4xV/dE83oKL0GKCn8uTGF/TXPDWX4SwC7p/uUpINwIgVFjpQyHbprBoPLfC+4cpA==
   dependencies:
     "@aws-sdk/client-lambda" "3.577.0"
     "@aws-sdk/credential-providers" "3.577.0"
@@ -13071,10 +13071,10 @@ thenify-all@^1.0.0:
   dependencies:
     any-promise "^1.0.0"
 
-thirdweb@0.0.0-dev-1ce88a8c7bec46055531a28e72078e7c4cedf693-20240528033310:
-  version "0.0.0-dev-1ce88a8c7bec46055531a28e72078e7c4cedf693-20240528033310"
-  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-0.0.0-dev-1ce88a8c7bec46055531a28e72078e7c4cedf693-20240528033310.tgz#4416ac75353aaafea53a5a508557711326c5d115"
-  integrity sha512-aRcD5+NvpJwFX+R+DWpoOG9h4IPKyQBO45lpm8JoLz2xpz4SO0BafIKBHzGl8b++Rty+kd+3KwtyTrHLKqMGJg==
+thirdweb@^5.25.1:
+  version "5.25.1"
+  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.25.1.tgz#889157f13d0caa59b5373cf60a13de5b67ace34b"
+  integrity sha512-WGPkA50UgzX8aw4x6Hkrb5XUrJ+x5ulCJ0VV9fjit7tz8mUPhKXQPlsenlCahFJWY381tR+vNXMhVMjFVeKHQA==
   dependencies:
     "@coinbase/wallet-sdk" "4.0.0-rc.2"
     "@emotion/react" "11.11.4"
