@@ -12,6 +12,14 @@ Starter template to build an onchain react native app with [thirdweb](https://th
 - reading contract state and events
 - writing to the blockchain
 
+## Installation
+
+Install the template using [thirdweb create](https://portal.thirdweb.com/cli/create)
+
+```bash
+  npx thirdweb create app --expo
+```
+
 ## Get started
 
 1. Install dependencies
