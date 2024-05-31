@@ -1,9 +1,9 @@
-![Group 1](https://github.com/thirdweb-example/thirdweb-auth-express/assets/17715009/06383e68-9c65-4265-8505-e88e573443f9)
+![Banner](https://github.com/thirdweb-example/thirdweb-auth-express/assets/17715009/06383e68-9c65-4265-8505-e88e573443f9)
 # thirdweb expo starter
 
-This is a working example of a onchain react native app built with thirdweb and expo.
+Starter template to build an onchain react native app with [thirdweb](https://thirdweb.com/) and [expo](https://expo.dev/).
 
-It showcases the usage of:
+### Features
 
 - in-app wallets using phone number, email or social logins to create a wallet for the user
 - smart accounts to sponsor gas
