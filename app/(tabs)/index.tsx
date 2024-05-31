@@ -171,7 +171,13 @@ function ConnectWithSocial(props: { auth: InAppWalletSocialAuth }) {
 					onPress={connectInAppWallet}
 					disabled={isConnecting}
 				>
-					<Image source={getSocialIcon(strategy)} resizeMode="center" />
+					<Image
+						source={getSocialIcon(strategy)}
+						style={{
+							width: 38,
+							height: 38,
+						}}
+					/>
 				</TouchableOpacity>
 			)}
 		</ThemedView>
