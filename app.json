@@ -8,8 +8,8 @@
 		"scheme": "myapp",
 		"userInterfaceStyle": "automatic",
 		"splash": {
-			"image": "./assets/images/thirdweb.png",
-			"resizeMode": "center",
+			"image": "./assets/images/splash.png",
+			"resizeMode": "contain",
 			"backgroundColor": "#ffffff"
 		},
 		"ios": {
