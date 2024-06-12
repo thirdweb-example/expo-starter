@@ -5589,16 +5589,15 @@
   dependencies:
     "@tanstack/query-core" "5.29.0"
 
-"@thirdweb-dev/react-native-adapter@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react-native-adapter/-/react-native-adapter-1.1.1.tgz#2a51965b16a46d882f2d86f9588bd747f96b4d8c"
-  integrity sha512-CFEDTy/Ejm2AdXqnj72Kjx4xV/dE83oKL0GKCn8uTGF/TXPDWX4SwC7p/uUpINwIgVFjpQyHbprBoPLfC+4cpA==
+"@thirdweb-dev/react-native-adapter@^1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@thirdweb-dev/react-native-adapter/-/react-native-adapter-1.2.0.tgz#4c082119722756c29b304ba40ad49985cbf73666"
+  integrity sha512-b3BA+f58ghXxuwID2VjAx9UJdSq+7RSpM6epxAZxkqkRF28bxnntIEvZNx7J57QPn0mSqWGpsgcpxU3OJKL45g==
   dependencies:
     "@aws-sdk/client-lambda" "3.577.0"
     "@aws-sdk/credential-providers" "3.577.0"
-    "@walletconnect/react-native-compat" "2.13.0"
+    "@walletconnect/react-native-compat" "2.13.2"
     aws-amplify "5.3.18"
-    shamir-secret-sharing "0.0.3"
 
 "@tootallnate/once@2":
   version "2.0.0"
@@ -6041,10 +6040,10 @@
     "@walletconnect/modal-core" "2.6.2"
     "@walletconnect/modal-ui" "2.6.2"
 
-"@walletconnect/react-native-compat@2.13.0":
-  version "2.13.0"
-  resolved "https://registry.yarnpkg.com/@walletconnect/react-native-compat/-/react-native-compat-2.13.0.tgz#1327bff05cd079e3344af21453ef8b7b9bb7ffd8"
-  integrity sha512-yOUUxQ1P3gpeifUu1bIo2seYYXF+B77npqO27EnvD7A3v4kG+nu4VIJdIvHiZjn/rPWDwqZI6oa0kaR4+DLgTA==
+"@walletconnect/react-native-compat@2.13.2":
+  version "2.13.2"
+  resolved "https://registry.yarnpkg.com/@walletconnect/react-native-compat/-/react-native-compat-2.13.2.tgz#791f6bcd1a18a72d41385ec7199b0ad58cf76156"
+  integrity sha512-5y/RDbFD92Clrk28oYNrPgk5p7LJKdP1UUoq/tJnjTbl2oxQYg9ECy8P7AHkZrwm0JWa1PvxDv4sasmKFMNerw==
   dependencies:
     events "3.3.0"
     fast-text-encoding "1.0.6"
@@ -12734,11 +12733,6 @@ shallowequal@^1.1.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/shallowequal/-/shallowequal-1.1.0.tgz#188d521de95b9087404fd4dcb68b13df0ae4e7f8"
   integrity sha512-y0m1JoUZSlPAjXVtPPW70aZWfIL/dSP7AFkRnniLCrK/8MDKog3TySTBmckD+RObVxH0v4Tox67+F14PdED2oQ==
-
-shamir-secret-sharing@0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/shamir-secret-sharing/-/shamir-secret-sharing-0.0.3.tgz#94f63288ce7c37d899dfaf5f0c77af377f65dd30"
-  integrity sha512-GPIb+QZDyjwwKSlVXEjHoOaBeevmdWz2IM2tz07nQvd0L9eMfLhzEqr7imajjjXCAO/cWgzXCCj0yFNMx6+miQ==
 
 shebang-command@^1.2.0:
   version "1.2.0"
