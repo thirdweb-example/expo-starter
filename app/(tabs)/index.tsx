@@ -74,6 +74,32 @@ export default function HomeScreen() {
 	);
 }
 
+function ConnectWithCustomAuth() {
+	const { connect, isConnecting, error } = useConnect();
+	const connectCustomAuth = async () => {
+		await connect(async () => {
+			const wallet = inAppWallet();
+			await wallet.connect({
+				client,
+				strategy: "auth_endpoint",
+				encryptionKey: "YOUR_ENCRYPTION_KEY",
+				payload: "YOUR_PAYLOAD",
+			});
+			return wallet;
+		});
+	};
+	return (
+		<>
+			<ThemedButton
+				title="Connect with custom auth"
+				onPress={connectCustomAuth}
+			/>
+			{isConnecting && !error && <ActivityIndicator />}
+			{error && <ThemedText>{error.message}</ThemedText>}
+		</>
+	);
+}
+
 function ConnectSection() {
 	const wallet = useActiveWallet();
 	const autoConnect = useAutoConnect({
@@ -98,15 +124,15 @@ function ConnectSection() {
 				</>
 			) : (
 				<ThemedView style={{ gap: 16 }}>
-					<ThemedText type="defaultSemiBold">In-app wallet</ThemedText>
-					<ConnectInAppWallet />
+					<ConnectWithCustomAuth />
+					{/* <ConnectInAppWallet />
 					<ThemedView style={{ height: 12 }} />
 					<ThemedText type="defaultSemiBold">External wallet</ThemedText>
 					<ThemedView style={styles.rowContainer}>
 						{externalWallets.map((w) => (
 							<ConnectExternalWallet key={w.id} {...w} />
 						))}
-					</ThemedView>
+					</ThemedView> */}
 				</ThemedView>
 			)}
 		</ThemedView>
