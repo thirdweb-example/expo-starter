@@ -1,9 +1,13 @@
 import {
 	ActivityIndicator,
+	Alert,
 	Image,
+	KeyboardAvoidingView,
 	Pressable,
 	StyleSheet,
 	TouchableOpacity,
+	View,
+	useColorScheme,
 } from "react-native";
 
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
@@ -18,6 +22,8 @@ import {
 	useWalletBalance,
 	useConnectedWallets,
 	useSetActiveWallet,
+	ConnectButton,
+	ConnectEmbed,
 } from "thirdweb/react";
 import {
 	getUserEmail,
@@ -56,6 +62,7 @@ const wallets = [
 const externalWallets = wallets.slice(1);
 
 export default function HomeScreen() {
+	const theme = useColorScheme();
 	return (
 		<ParallaxScrollView
 			headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
@@ -70,6 +77,20 @@ export default function HomeScreen() {
 				<ThemedText type="title">Connecting Wallets</ThemedText>
 			</ThemedView>
 			<ConnectSection />
+			{/* <ConnectButton
+				client={client}
+				theme={theme || "dark"}
+				onConnect={(w) => Alert.alert("connected", w.id)}
+			/>
+			<ConnectEmbed
+				client={client}
+				theme={theme || "dark"}
+				// accountAbstraction={{
+				// 	chain,
+				// 	sponsorGas: true,
+				// }}
+				onConnect={(w) => Alert.alert("connected", w.id)}
+			/> */}
 		</ParallaxScrollView>
 	);
 }
@@ -82,6 +103,8 @@ function ConnectSection() {
 	});
 	const autoConnecting = autoConnect.isLoading;
 
+	const c = useConnect();
+
 	if (autoConnecting) {
 		return (
 			<ThemedView style={{ padding: 24 }}>
@@ -89,7 +112,6 @@ function ConnectSection() {
 			</ThemedView>
 		);
 	}
-
 	return (
 		<ThemedView style={styles.stepContainer}>
 			{wallet ? (
@@ -98,7 +120,28 @@ function ConnectSection() {
 				</>
 			) : (
 				<ThemedView style={{ gap: 16 }}>
+					{/* <ThemedText type="defaultSemiBold">Connect to get started</ThemedText> */}
 					<ThemedText type="defaultSemiBold">In-app wallet</ThemedText>
+					<ThemedButton
+						title="Custom auth"
+						variant="secondary"
+						onPress={async () => {
+							console.log("connecting");
+							await c.connect(async () => {
+								const wallet = inAppWallet();
+								await wallet.connect({
+									client,
+									strategy: "auth_endpoint",
+									encryptionKey: "123",
+									payload: JSON.stringify({
+										foo: "bar",
+									}),
+								});
+								return wallet;
+							});
+						}}
+					/>
+					{c.error && <ThemedText>{c.error.message}</ThemedText>}
 					<ConnectInAppWallet />
 					<ThemedView style={{ height: 12 }} />
 					<ThemedText type="defaultSemiBold">External wallet</ThemedText>
@@ -196,8 +239,8 @@ function ConnectWithPhoneNumber() {
 		setSendingOtp(true);
 		await preAuthenticate({
 			client,
-			strategy: "phone",
-			phoneNumber,
+			strategy: "email",
+			email: phoneNumber,
 		});
 		setSendingOtp(false);
 		setScreen("code");
@@ -207,15 +250,15 @@ function ConnectWithPhoneNumber() {
 		if (!verificationCode || !phoneNumber) return;
 		await connect(async () => {
 			const wallet = inAppWallet({
-				smartAccount: {
-					chain,
-					sponsorGas: true,
-				},
+				// smartAccount: {
+				// 	chain,
+				// 	sponsorGas: true,
+				// },
 			});
 			await wallet.connect({
 				client,
-				strategy: "phone",
-				phoneNumber,
+				strategy: "email",
+				email: phoneNumber,
 				verificationCode,
 			});
 			return wallet;
