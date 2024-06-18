@@ -13430,7 +13430,7 @@ thenify-all@^1.0.0:
     any-promise "^1.0.0"
 
 "thirdweb@file:../../thirdweb/js/packages/thirdweb":
-  version "5.28.0"
+  version "5.29.2"
   dependencies:
     "@coinbase/wallet-sdk" "4.0.3"
     "@emotion/react" "11.11.4"

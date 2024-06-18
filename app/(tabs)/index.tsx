@@ -76,8 +76,7 @@ export default function HomeScreen() {
 			<ThemedView style={styles.titleContainer}>
 				<ThemedText type="title">Connecting Wallets</ThemedText>
 			</ThemedView>
-			<ConnectSection />
-			{/* <ConnectButton
+			<ConnectButton
 				client={client}
 				theme={theme || "dark"}
 				onConnect={(w) => Alert.alert("connected", w.id)}
@@ -90,7 +89,8 @@ export default function HomeScreen() {
 				// 	sponsorGas: true,
 				// }}
 				onConnect={(w) => Alert.alert("connected", w.id)}
-			/> */}
+			/>
+			<ConnectedSection />
 		</ParallaxScrollView>
 	);
 }
@@ -469,9 +469,7 @@ function ConnectedSection() {
 					</ThemedView>
 				</>
 			) : (
-				<>
-					<ThemedText>Connect to mint an NFT.</ThemedText>
-				</>
+				null
 			)}
 		</>
 	);
