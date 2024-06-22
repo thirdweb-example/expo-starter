@@ -14,10 +14,10 @@ Starter template to build an onchain react native app with [thirdweb](https://th
 
 ## Installation
 
-Install the template using [thirdweb create](https://portal.thirdweb.com/cli/create)
+Install the template using [thirdweb create](https://portal.thirdweb.com/cli/create) and select the React Native option
 
 ```bash
-  npx thirdweb create app --expo
+  npx thirdweb create app
 ```
 
 ## Get started
