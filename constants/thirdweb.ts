@@ -10,11 +10,6 @@ if (!clientId) {
   );
 }
 
-setThirdwebDomains({
-  inAppWallet: "localhost:3000",
-  rpc: "rpc.thirdweb-dev.com",
-});
-
 export const client = createThirdwebClient({
   clientId,
 });
