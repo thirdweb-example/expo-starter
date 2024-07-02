@@ -47,7 +47,8 @@ export default function HomeScreen() {
 				<ThemedText type="subtitle">{`<ConnectButton />`}</ThemedText>
 				<ThemedText type="subtext">
 					Configurable button + modal, handles both connection and connected
-					state. Example below has Smart Accounts enabled.
+					state. Example below has Smart Accounts + sponsored transactions
+					enabled.
 				</ThemedText>
 			</View>
 			<ConnectButton

@@ -47,8 +47,6 @@ function WriteSection() {
 		tokenId: 1n,
 	});
 
-	console.log(nftQuery.data);
-
 	const mint = async () => {
 		if (!account) return;
 		sendMutation.mutate(
