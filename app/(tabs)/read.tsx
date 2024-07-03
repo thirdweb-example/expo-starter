@@ -1,4 +1,4 @@
-import { StyleSheet, Image, ActivityIndicator } from "react-native";
+import { StyleSheet, Image, ActivityIndicator, View } from "react-native";
 
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -42,25 +42,29 @@ function ReadSection() {
 
 	return (
 		<ThemedView style={styles.stepContainer}>
-			<ThemedText type="subtitle">Contract state</ThemedText>
-			<ThemedText>
-				Contract name:{" "}
-				<ThemedText type="defaultSemiBold">{nameQuery.data}</ThemedText>{" "}
-			</ThemedText>
-			<ThemedText>
-				Supply:{" "}
-				<ThemedText type="defaultSemiBold">
-					{supplyQuery.data?.toString()}
-				</ThemedText>{" "}
-			</ThemedText>
+			<View style={{ gap: 2 }}>
+				<ThemedText type="subtitle">useReadContract</ThemedText>
+				<ThemedText type="subtext">
+					Hook to read contract data, with auto refetching.
+				</ThemedText>
+			</View>
+			<View style={{ gap: 2 }}>
+				<ThemedText>
+					Contract name:{" "}
+					<ThemedText type="defaultSemiBold">{nameQuery.data}</ThemedText>{" "}
+				</ThemedText>
+				<ThemedText>
+					Supply:{" "}
+					<ThemedText type="defaultSemiBold">
+						{supplyQuery.data?.toString()}
+					</ThemedText>{" "}
+				</ThemedText>
+			</View>
 		</ThemedView>
 	);
 }
 
 function EventsSection() {
-	const nameQuery = useReadContract(name, {
-		contract: usdcContract,
-	});
 	const eventsQuery = useContractEvents({
 		contract: usdcContract,
 		events: [transferEvent()],
@@ -69,12 +73,16 @@ function EventsSection() {
 
 	return (
 		<ThemedView style={styles.stepContainer}>
-			<ThemedText type="subtitle">Contract events</ThemedText>
-			<ThemedText>
-				Live transfer events:{" "}
-				<ThemedText type="defaultSemiBold">{nameQuery.data}</ThemedText>{" "}
-			</ThemedText>
+			<View style={{ gap: 2 }}>
+				<ThemedText type="subtitle">useContractEvents</ThemedText>
+				<ThemedText type="subtext">
+					Hook to subscribe to live contract events.
+				</ThemedText>
+			</View>
 			<ThemedView style={{ height: 4 }} />
+			<ThemedText>
+				Live <ThemedText type="defaultSemiBold">USDC</ThemedText> transfers
+			</ThemedText>
 			{eventsQuery.isLoading && <ActivityIndicator />}
 			{eventsQuery.data
 				?.slice(-10)

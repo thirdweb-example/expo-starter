@@ -43,7 +43,7 @@ export default function HomeScreen() {
 			<ThemedView style={styles.titleContainer}>
 				<ThemedText type="title">Connecting Wallets</ThemedText>
 			</ThemedView>
-			<View>
+			<View style={{ gap: 2 }}>
 				<ThemedText type="subtitle">{`<ConnectButton />`}</ThemedText>
 				<ThemedText type="subtext">
 					Configurable button + modal, handles both connection and connected
@@ -60,7 +60,7 @@ export default function HomeScreen() {
 				}}
 			/>
 			<View style={{ height: 16 }} />
-			<View>
+			<View style={{ gap: 2 }}>
 				<ThemedText type="subtitle">{`<ConnectEmbed />`}</ThemedText>
 				<ThemedText type="subtext">
 					Embeddable connection component in any screen. Example below is
@@ -80,7 +80,7 @@ export default function HomeScreen() {
 				</ThemedText>
 			)}
 			<View style={{ height: 16 }} />
-			<View>
+			<View style={{ gap: 2 }}>
 				<ThemedText type="subtitle">{`Custom UI`}</ThemedText>
 				<ThemedText type="subtext">
 					Easy to use the hooks to build your own UI. Example below connects to

@@ -1,4 +1,4 @@
-import { Image, StyleSheet } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
 import { ThemedText } from "@/components/ThemedText";
@@ -29,6 +29,12 @@ export default function WriteScreen() {
 			<ThemedView style={styles.titleContainer}>
 				<ThemedText type="title">Transactions</ThemedText>
 			</ThemedView>
+			<View style={{ gap: 2 }}>
+				<ThemedText type="subtitle">useSendTransaction</ThemedText>
+				<ThemedText type="subtext">
+					Hook to submit transactions onchain from the connected wallet.
+				</ThemedText>
+			</View>
 			<WriteSection />
 		</ParallaxScrollView>
 	);
