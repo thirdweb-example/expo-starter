@@ -30,7 +30,7 @@ export default function WriteScreen() {
 				<ThemedText type="title">Transactions</ThemedText>
 			</ThemedView>
 			<View style={{ gap: 2 }}>
-				<ThemedText type="subtitle">useSendTransaction</ThemedText>
+				<ThemedText type="subtitle">useSendTransaction()</ThemedText>
 				<ThemedText type="subtext">
 					Hook to submit transactions onchain from the connected wallet.
 				</ThemedText>

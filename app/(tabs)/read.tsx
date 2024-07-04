@@ -43,7 +43,7 @@ function ReadSection() {
 	return (
 		<ThemedView style={styles.stepContainer}>
 			<View style={{ gap: 2 }}>
-				<ThemedText type="subtitle">useReadContract</ThemedText>
+				<ThemedText type="subtitle">useReadContract()</ThemedText>
 				<ThemedText type="subtext">
 					Hook to read contract data, with auto refetching.
 				</ThemedText>
@@ -74,7 +74,7 @@ function EventsSection() {
 	return (
 		<ThemedView style={styles.stepContainer}>
 			<View style={{ gap: 2 }}>
-				<ThemedText type="subtitle">useContractEvents</ThemedText>
+				<ThemedText type="subtitle">useContractEvents()</ThemedText>
 				<ThemedText type="subtext">
 					Hook to subscribe to live contract events.
 				</ThemedText>

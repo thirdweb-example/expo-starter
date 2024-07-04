@@ -47,7 +47,7 @@
 		"react-native-screens": "3.31.1",
 		"react-native-svg": "15.2.0",
 		"react-native-web": "~0.19.10",
-		"thirdweb": "5.32.2-nightly-229561e1a79fe2ab3f010c5a8659c7e0fc497ec3-20240703090013"
+		"thirdweb": "^5.32.2"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.20.0",

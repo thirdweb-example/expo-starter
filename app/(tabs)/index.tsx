@@ -10,6 +10,7 @@ import {
 	useActiveWallet,
 	ConnectButton,
 	ConnectEmbed,
+	lightTheme,
 } from "thirdweb/react";
 import { getUserEmail, inAppWallet } from "thirdweb/wallets/in-app";
 import { chain, client } from "@/constants/thirdweb";
@@ -54,9 +55,42 @@ export default function HomeScreen() {
 			<ConnectButton
 				client={client}
 				theme={theme || "dark"}
-				accountAbstraction={{
-					chain,
-					sponsorGas: true,
+				wallets={[
+					inAppWallet({
+						smartAccount: {
+							chain,
+							sponsorGas: true,
+						},
+					}),
+					...wallets,
+				]}
+			/>
+			<View style={{ gap: 2 }}>
+				<ThemedText type="subtitle">{`Themed <ConnectButton />`}</ThemedText>
+				<ThemedText type="subtext">
+					Styled the Connect Button to match your app.
+				</ThemedText>
+			</View>
+			<ConnectButton
+				client={client}
+				theme={lightTheme({
+					colors: {
+						primaryButtonBg: "#e0142f",
+						modalBg: "#e0142f",
+						borderColor: "#ed3a51",
+						accentButtonBg: "#b11025",
+						primaryText: "#fef5f6",
+						secondaryIconColor: "#e2dddd",
+						secondaryText: "#e2dddd",
+						secondaryButtonBg: "#ed3a51",
+					},
+				})}
+				wallets={wallets}
+				connectButton={{
+					label: "Sign in to ✨ MyApp",
+				}}
+				connectModal={{
+					title: "✨ MyApp Login",
 				}}
 			/>
 			<View style={{ height: 16 }} />
@@ -81,10 +115,10 @@ export default function HomeScreen() {
 			)}
 			<View style={{ height: 16 }} />
 			<View style={{ gap: 2 }}>
-				<ThemedText type="subtitle">{`Custom UI`}</ThemedText>
+				<ThemedText type="subtitle">{`useConnect()`}</ThemedText>
 				<ThemedText type="subtext">
-					Easy to use the hooks to build your own UI. Example below connects to
-					a smart Google account or metamask EOA.
+					Hooks to build your own UI. Example below connects to a smart Google
+					account or metamask EOA.
 				</ThemedText>
 			</View>
 			<CustomConnectUI />
