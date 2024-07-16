@@ -38,8 +38,10 @@
 		"react-dom": "18.2.0",
 		"react-native": "0.74.1",
 		"react-native-aes-gcm-crypto": "^0.2.2",
+		"react-native-document-picker": "^9.3.0",
 		"react-native-gesture-handler": "~2.16.1",
 		"react-native-get-random-values": "~1.11.0",
+		"react-native-image-picker": "^7.1.2",
 		"react-native-mmkv": "^2.12.2",
 		"react-native-quick-crypto": "0.7.0",
 		"react-native-reanimated": "~3.10.1",
@@ -47,7 +49,7 @@
 		"react-native-screens": "3.31.1",
 		"react-native-svg": "15.2.0",
 		"react-native-web": "~0.19.10",
-		"thirdweb": "^5.32.2"
+		"thirdweb": "5.35.0-nightly-aadbd33e9d696bd7dd77561fa3f3a0a0fa7747f5-20240716082511"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.20.0",

@@ -12103,6 +12103,13 @@ react-native-aes-gcm-crypto@^0.2.2:
   resolved "https://registry.yarnpkg.com/react-native-aes-gcm-crypto/-/react-native-aes-gcm-crypto-0.2.2.tgz#e2c355e94a88ef52179dc22ae81988637b9ba7f1"
   integrity sha512-vUwkh2zBiIQMRY191IfZhDmhHVT+nV4sxet/A0V8J35lVShCA4kuFzBL+QVB06RM2EF8oZSnNMt/uvFkKAx6QQ==
 
+react-native-document-picker@^9.3.0:
+  version "9.3.0"
+  resolved "https://registry.yarnpkg.com/react-native-document-picker/-/react-native-document-picker-9.3.0.tgz#4651d354623367d06397fe6dbf4a496f7d92ca6b"
+  integrity sha512-X/j0xKn8cObckpHTNwE/hW9WzBiP6oKx820FYu1Nat43QnnHmmT6uozFgAUDcJfxmZGcEdLlbv0lNhnyRXJyyA==
+  dependencies:
+    invariant "^2.2.4"
+
 react-native-gesture-handler@~2.16.1:
   version "2.16.2"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-2.16.2.tgz#032bd2a07334292d7f6cff1dc9d1ec928f72e26d"
@@ -12129,6 +12136,11 @@ react-native-helmet-async@2.0.4:
     invariant "^2.2.4"
     react-fast-compare "^3.2.2"
     shallowequal "^1.1.0"
+
+react-native-image-picker@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-7.1.2.tgz#383849d1953caf4578874a1f5e5dd11c737bd5cd"
+  integrity sha512-b5y5nP60RIPxlAXlptn2QwlIuZWCUDWa/YPUVjgHc0Ih60mRiOg1PSzf0IjHSLeOZShCpirpvSPGnDExIpTRUg==
 
 react-native-mmkv@2.11.0:
   version "2.11.0"
@@ -13382,10 +13394,10 @@ thenify-all@^1.0.0:
   dependencies:
     any-promise "^1.0.0"
 
-thirdweb@^5.32.2:
-  version "5.32.2"
-  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.32.2.tgz#5b8f41f8068cb5ef83b496b0e8b6bd6e28844e35"
-  integrity sha512-g75DORwQezYzh3ttsjxHMLeym+w7v0qexjM1RdtEKlU0alB45FQhdlm0Zd37gUidrAwQHNZSstwVtAfWi9PuAQ==
+thirdweb@5.35.0-nightly-aadbd33e9d696bd7dd77561fa3f3a0a0fa7747f5-20240716082511:
+  version "5.35.0-nightly-aadbd33e9d696bd7dd77561fa3f3a0a0fa7747f5-20240716082511"
+  resolved "https://registry.yarnpkg.com/thirdweb/-/thirdweb-5.35.0-nightly-aadbd33e9d696bd7dd77561fa3f3a0a0fa7747f5-20240716082511.tgz#567bdeef2b7fee0d4b892c32c6410b5ab3aed33d"
+  integrity sha512-7g4/ktp84RAOG7ZbbnlsemJVsyYDzodPonGhkaO1domHOqgTFSrlDGev3Ss4obv6P9YwsIwJvPF1g8KfXF9+7Q==
   dependencies:
     "@coinbase/wallet-sdk" "4.0.3"
     "@emotion/react" "11.11.4"

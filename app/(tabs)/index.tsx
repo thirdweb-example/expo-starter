@@ -19,6 +19,7 @@ import { ThemedButton } from "@/components/ThemedButton";
 import { useEffect, useState } from "react";
 import { createWallet } from "thirdweb/wallets";
 import { ethereum } from "thirdweb/chains";
+import { createAuth } from "thirdweb/auth";
 
 const wallets = [
 	createWallet("io.metamask"),
@@ -27,6 +28,14 @@ const wallets = [
 	createWallet("com.trustwallet.app"),
 	createWallet("io.zerion.wallet"),
 ];
+
+const thirdwebAuth = createAuth({
+	domain: "localhost:3000",
+	client,
+});
+
+// fake login state, this should be returned from the backend
+let isLoggedIn = false;
 
 export default function HomeScreen() {
 	const account = useActiveAccount();
@@ -98,7 +107,7 @@ export default function HomeScreen() {
 				<ThemedText type="subtitle">{`<ConnectEmbed />`}</ThemedText>
 				<ThemedText type="subtext">
 					Embeddable connection component in any screen. Example below is
-					configured with a specific list of EOAs.
+					configured with a specific list of EOAs + SIWE.
 				</ThemedText>
 			</View>
 			<ConnectEmbed
@@ -106,6 +115,23 @@ export default function HomeScreen() {
 				theme={theme || "dark"}
 				chain={ethereum}
 				wallets={wallets}
+				auth={{
+					async doLogin(params) {
+						// fake delay
+						await new Promise((resolve) => setTimeout(resolve, 2000));
+						const verifiedPayload = await thirdwebAuth.verifyPayload(params);
+						isLoggedIn = verifiedPayload.valid;
+					},
+					async doLogout() {
+						isLoggedIn = false;
+					},
+					async getLoginPayload(params) {
+						return thirdwebAuth.generatePayload(params);
+					},
+					async isLoggedIn(address) {
+						return isLoggedIn;
+					},
+				}}
 			/>
 			{account && (
 				<ThemedText type="subtext">
