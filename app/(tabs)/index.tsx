@@ -66,6 +66,16 @@ export default function HomeScreen() {
 				theme={theme || "dark"}
 				wallets={[
 					inAppWallet({
+						auth: {
+							options: [
+								"google",
+								"facebook",
+								"discord",
+								"apple",
+								"email",
+								"phone",
+							],
+						},
 						smartAccount: {
 							chain,
 							sponsorGas: true,
