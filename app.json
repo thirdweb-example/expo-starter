@@ -14,14 +14,26 @@
 		},
 		"ios": {
 			"supportsTablet": true,
-			"bundleIdentifier": "com.thirdweb.demo"
+			"bundleIdentifier": "com.thirdweb.demo",
+			"associatedDomains": ["webcredentials:thirdweb.com"]
 		},
 		"android": {
 			"adaptiveIcon": {
 				"foregroundImage": "./assets/images/adaptive-icon.png",
 				"backgroundColor": "#ffffff"
 			},
-			"package": "com.thirdweb.demo"
+			"package": "com.thirdweb.demo",
+			"intentFilters": [
+				{
+					"autoVerify": true,
+					"action": "VIEW",
+					"data": {
+						"scheme": "https",
+						"host": "thirdweb.com"
+					},
+					"category": ["BROWSABLE", "DEFAULT"]
+				}
+			]
 		},
 		"web": {
 			"bundler": "metro",

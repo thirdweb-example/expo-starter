@@ -12,18 +12,38 @@ import {
 	ConnectEmbed,
 	lightTheme,
 } from "thirdweb/react";
-import { getUserEmail, inAppWallet } from "thirdweb/wallets/in-app";
+import {
+	getUserEmail,
+	hasStoredPasskey,
+	inAppWallet,
+} from "thirdweb/wallets/in-app";
 import { chain, client } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
 import { useEffect, useState } from "react";
 import { createWallet } from "thirdweb/wallets";
-import { ethereum } from "thirdweb/chains";
+import { ethereum, base } from "thirdweb/chains";
 import { createAuth } from "thirdweb/auth";
 
 const wallets = [
+	inAppWallet({
+		auth: {
+			passkeyDomain: "thirdweb.com",
+		},
+		smartAccount: {
+			chain: base,
+			sponsorGas: true,
+		},
+	}),
 	createWallet("io.metamask"),
-	createWallet("com.coinbase.wallet"),
+	createWallet("com.coinbase.wallet", {
+		appMetadata: {
+			name: "Thirdweb RN Demo",
+		},
+		mobileConfig: {
+			callbackURL: "https://thirdweb.com",
+		},
+	}),
 	createWallet("me.rainbow"),
 	createWallet("com.trustwallet.app"),
 	createWallet("io.zerion.wallet"),
@@ -64,25 +84,8 @@ export default function HomeScreen() {
 			<ConnectButton
 				client={client}
 				theme={theme || "dark"}
-				wallets={[
-					inAppWallet({
-						auth: {
-							options: [
-								"google",
-								"facebook",
-								"discord",
-								"apple",
-								"email",
-								"phone",
-							],
-						},
-						smartAccount: {
-							chain,
-							sponsorGas: true,
-						},
-					}),
-					...wallets,
-				]}
+				wallets={wallets}
+				chain={base}
 			/>
 			<View style={{ gap: 2 }}>
 				<ThemedText type="subtitle">{`Themed <ConnectButton />`}</ThemedText>
@@ -184,6 +187,7 @@ const CustomConnectUI = () => {
 		<>
 			<ConnectWithGoogle />
 			<ConnectWithMetaMask />
+			<ConnectWithPasskey />
 		</>
 	);
 };
@@ -227,6 +231,33 @@ const ConnectWithMetaMask = () => {
 					const w = createWallet("io.metamask");
 					await w.connect({
 						client,
+					});
+					return w;
+				});
+			}}
+		/>
+	);
+};
+
+const ConnectWithPasskey = () => {
+	const { connect, isConnecting } = useConnect();
+	return (
+		<ThemedButton
+			title="Login with Passkey"
+			onPress={() => {
+				connect(async () => {
+					const hasPasskey = await hasStoredPasskey({
+						client,
+					});
+					const w = inAppWallet({
+						auth: {
+							passkeyDomain: "thirdweb.com",
+						},
+					});
+					await w.connect({
+						client,
+						strategy: "passkey",
+						type: hasPasskey ? "sign-in" : "sign-up",
 					});
 					return w;
 				});
