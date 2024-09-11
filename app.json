@@ -15,7 +15,10 @@
 		"ios": {
 			"supportsTablet": true,
 			"bundleIdentifier": "com.thirdweb.demo",
-			"associatedDomains": ["webcredentials:thirdweb.com"]
+			"associatedDomains": [
+				"webcredentials:thirdweb.com",
+				"applinks:thirdweb.com"
+			]
 		},
 		"android": {
 			"adaptiveIcon": {
