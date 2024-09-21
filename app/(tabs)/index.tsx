@@ -31,7 +31,7 @@ const wallets = [
       options: [
         "google",
         "facebook",
-        "farcaster",
+        "discord",
         "telegram",
         "email",
         "phone",

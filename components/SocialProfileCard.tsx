@@ -5,6 +5,7 @@ import { useSocialProfiles } from "thirdweb/react";
 import { ThirdwebClient } from "thirdweb";
 import { resolveScheme } from "thirdweb/storage";
 import { SocialProfile, FarcasterProfile, getSocialProfiles } from "thirdweb/social";
+import { ThemedView } from "./ThemedView";
 
 interface SocialProfileCardProps {
   address: string | undefined;
@@ -40,7 +41,7 @@ export function SocialProfileCard({
 }) {
   if (!profile) return null;
   return (
-    <View style={styles.card}>
+    <ThemedView style={styles.card}>
       <View style={styles.contentContainer}>
         {profile.avatar && (
           <Image source={{ uri: resolveScheme({ client, uri: profile.avatar }) }} style={styles.avatar} />
@@ -51,13 +52,12 @@ export function SocialProfileCard({
           <ThemedText type="subtext">{profile.type}</ThemedText>
         </View>
       </View>
-    </View>
+    </ThemedView>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "white",
     borderRadius: 8,
     padding: 16,
     marginVertical: 8,
