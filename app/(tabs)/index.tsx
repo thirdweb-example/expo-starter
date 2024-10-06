@@ -21,7 +21,7 @@ import { chain, client } from "@/constants/thirdweb";
 import { shortenAddress } from "thirdweb/utils";
 import { ThemedButton } from "@/components/ThemedButton";
 import { useEffect, useState } from "react";
-import { createWallet } from "thirdweb/wallets";
+import { createWallet, ecosystemWallet } from "thirdweb/wallets";
 import { baseSepolia, ethereum } from "thirdweb/chains";
 import { createAuth } from "thirdweb/auth";
 
@@ -197,10 +197,35 @@ const CustomConnectUI = () => {
     </View>
   ) : (
     <>
+      <ConnectWithEcosystem />
       <ConnectWithGoogle />
       <ConnectWithMetaMask />
       <ConnectWithPasskey />
     </>
+  );
+};
+
+const ConnectWithEcosystem = () => {
+  const { connect, isConnecting } = useConnect();
+  return (
+    <ThemedButton
+      title="Connect with New Age"
+      loading={isConnecting}
+      loadingTitle="Connecting..."
+      onPress={() => {
+        connect(async () => {
+          // const w = ecosystemWallet("ecosystem.new-age");
+          const w = inAppWallet();
+          await w.connect({
+            client,
+            strategy: "auth_endpoint",
+            payload: "payload",
+            encryptionKey: "encryptionKey",
+          });
+          return w;
+        });
+      }}
+    />
   );
 };
 
