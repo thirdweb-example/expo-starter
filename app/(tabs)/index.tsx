@@ -109,17 +109,26 @@ export default function HomeScreen() {
         client={client}
         theme={lightTheme({
           colors: {
-            primaryButtonBg: "#e0142f",
-            modalBg: "#e0142f",
-            borderColor: "#ed3a51",
-            accentButtonBg: "#b11025",
-            primaryText: "#fef5f6",
-            secondaryIconColor: "#e2dddd",
-            secondaryText: "#e2dddd",
-            secondaryButtonBg: "#ed3a51",
+            primaryButtonBg: "#1e8449",
+            modalBg: "#1e8449",
+            borderColor: "#196f3d",
+            accentButtonBg: "#196f3d",
+            primaryText: "#ffffff",
+            secondaryIconColor: "#a7b8b9",
+            secondaryText: "#a7b8b9",
+            secondaryButtonBg: "#196f3d",
           },
         })}
-        wallets={wallets}
+        wallets={[
+          createWallet("io.metamask"),
+          createWallet("com.coinbase.wallet"),
+          createWallet("me.rainbow"),
+          createWallet("com.trustwallet.app"),
+          createWallet("io.zerion.wallet"),
+          createWallet("xyz.argent"),
+          createWallet("com.okex.wallet"),
+          createWallet("com.zengo")
+        ]}
         connectButton={{
           label: "Sign in to ✨ MyApp",
         }}
