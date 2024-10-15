@@ -11,6 +11,7 @@ import {
   ConnectButton,
   lightTheme,
   ConnectEmbed,
+  useLinkProfile,
 } from "thirdweb/react";
 import {
   getUserEmail,
@@ -192,12 +193,15 @@ const CustomConnectUI = () => {
     <View>
       <ThemedText>Connected as {shortenAddress(account.address)}</ThemedText>
       {email && <ThemedText type="subtext">{email}</ThemedText>}
+      <ConnectWithPasskey />
       <View style={{ height: 16 }} />
       <ThemedButton onPress={() => disconnect(wallet)} title="Disconnect" />
+
     </View>
   ) : (
     <>
       <ConnectWithEcosystem />
+      <ConnectWithJWT />
       <ConnectWithGoogle />
       <ConnectWithMetaMask />
       <ConnectWithPasskey />
@@ -206,7 +210,13 @@ const CustomConnectUI = () => {
 };
 
 const ConnectWithEcosystem = () => {
-  const { connect, isConnecting } = useConnect();
+  const { connect, isConnecting } = useConnect({
+    client,
+    accountAbstraction: {
+      sponsorGas: true,
+      chain
+    }
+  });
   return (
     <ThemedButton
       title="Connect with New Age"
@@ -214,13 +224,11 @@ const ConnectWithEcosystem = () => {
       loadingTitle="Connecting..."
       onPress={() => {
         connect(async () => {
-          // const w = ecosystemWallet("ecosystem.new-age");
-          const w = inAppWallet();
+          const w = ecosystemWallet("ecosystem.catfans");
+          // const w = inAppWallet();
           await w.connect({
             client,
-            strategy: "auth_endpoint",
-            payload: "payload",
-            encryptionKey: "encryptionKey",
+            strategy: "facebook",
           });
           return w;
         });
@@ -228,6 +236,32 @@ const ConnectWithEcosystem = () => {
     />
   );
 };
+
+
+const ConnectWithJWT = () => {
+  const { connect, isConnecting } = useConnect();
+  return (
+    <ThemedButton
+      title="Connect with JWT"
+      loading={isConnecting}
+      loadingTitle="Connecting..."
+      onPress={() => {
+        connect(async () => {
+          const w = inAppWallet();
+          await w.connect({
+            client,
+            strategy: "jwt",
+            jwt: "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IjAifQ.eyJpc3MiOiJodHRwczovL2VtYmVkZGVkLXdhbGxldC50aGlyZHdlYi1wcmV2aWV3LmNvbSIsInN1YiI6InRlc3RfY3VzdG9tX2p3dDpoZWxsbyIsImF1ZCI6WyJ0aGlyZHdlYl9qd2tfdGVzdF9hdWQiLCJzb21ldGhpbmdFbHNlIl0sImV4cCI6MTczNjM3Mzk0My4zMDcsImlhdCI6MTcyODU5Nzk0My4zMDcsIm5hbWUiOiJoZWxsbyIsInBpY3R1cmUiOiJodHRwOi8vZXhhbXBsZS5jb20vamFuZWRvZS9tZS5qcGcifQ.Hz9fnWUeYjE7bavcsMyvZghO95YW7rCR3zNW-J77QTaNT9o5n6w3PuqyegfBFSd8khTu6O9vUXdmRw1ppr2dqtC0Ue73IR-zevsltCrK-6M9KC2HVnTMgF8Fc583MN16P32SsbOiiq6argE8z1RbLux3SIIEq1GwBLECdspJf8LJUS4Z8rGWyZ0hXFx14Z3MF65weTpw_qRHy5udHoVBVGE6kNYdyWU256brCh46qgYtYRMcpeIoLZ5MUV3dWuXL9Yos8Wp1OU5HcT48S-eukv_BYT5PUB-9KGMZp9Zln-i5aHJCt3Ab4sVeUketx2afijGjN4sQjyDakz71WWLZiw",
+            encryptionKey: "foo",
+          });
+          return w;
+        });
+      }}
+    />
+  );
+};
+
+
 
 const ConnectWithGoogle = () => {
   const { connect, isConnecting } = useConnect();
@@ -278,25 +312,33 @@ const ConnectWithMetaMask = () => {
 
 const ConnectWithPasskey = () => {
   const { connect } = useConnect();
+  const { mutateAsync:linkProfile } = useLinkProfile();
   return (
     <ThemedButton
       title="Login with Passkey"
-      onPress={() => {
-        connect(async () => {
-          const hasPasskey = await hasStoredPasskey(client);
-          const w = inAppWallet({
-            auth: {
-              options: ["passkey"],
-              passkeyDomain: "thirdweb.com",
-            },
-          });
-          await w.connect({
-            client,
-            strategy: "passkey",
-            type: hasPasskey ? "sign-in" : "sign-up",
-          });
-          return w;
+      onPress={async () => {
+        const res = await linkProfile({
+          client,
+          strategy: "passkey",
+          type: "sign-up",
+          passkeyName: "demo passkey",
         });
+        console.log(res);
+        // connect(async () => {
+        //   const hasPasskey = await hasStoredPasskey(client);
+        //   const w = inAppWallet({
+        //     auth: {
+        //       options: ["passkey"],
+        //       passkeyDomain: "thirdweb.com",
+        //     },
+        //   });
+        //   await w.connect({
+        //     client,
+        //     strategy: "passkey",
+        //     type: hasPasskey ? "sign-in" : "sign-up",
+        //   });
+        //   return w;
+        // });
       }}
     />
   );
