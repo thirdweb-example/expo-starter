@@ -57,7 +57,7 @@
 								"name": "OpenSSL-Universal",
 								"configurations": ["Release", "Debug"],
 								"modular_headers": true,
-								"version": "3.1.5004"
+								"version": "3.3.2000"
 							}
 						]
 					}
