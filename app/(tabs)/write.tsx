@@ -1,24 +1,22 @@
 import { Image, Linking, StyleSheet, View } from "react-native";
 
 import { ParallaxScrollView } from "@/components/ParallaxScrollView";
+import { ThemedButton } from "@/components/ThemedButton";
 import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
+import { client, contract } from "@/constants/thirdweb";
+import { Link } from "expo-router";
+import { useState } from "react";
+import DocumentPicker from "react-native-document-picker";
+import { balanceOf, claimTo, getNFT } from "thirdweb/extensions/erc721";
 import {
-	useReadContract,
 	useActiveAccount,
+	useReadContract,
 	useSendAndConfirmTransaction,
 } from "thirdweb/react";
-import { balanceOf, claimTo, getNFT } from "thirdweb/extensions/erc721";
-import { client, contract } from "@/constants/thirdweb";
-import { shortenAddress } from "thirdweb/utils";
 import { resolveScheme } from "thirdweb/storage";
-import { ThemedButton } from "@/components/ThemedButton";
-import { Link } from "expo-router";
 import { uploadMobile } from "thirdweb/storage";
-import DocumentPicker from "react-native-document-picker";
-import { getContract, sendTransaction } from "thirdweb";
-import { mintTo } from "thirdweb/extensions/erc721";
-import { useState } from "react";
+import { shortenAddress } from "thirdweb/utils";
 
 export default function WriteScreen() {
 	return (
@@ -120,7 +118,7 @@ function WriteSection() {
 			) : (
 				<>
 					<ThemedText>
-						<Link href="(tabs)">
+						<Link href="/(tabs)">
 							<ThemedText type="link">Connect</ThemedText>
 						</Link>{" "}
 						a wallet to perform transactions
