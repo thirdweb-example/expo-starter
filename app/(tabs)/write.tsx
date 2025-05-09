@@ -7,7 +7,7 @@ import { ThemedView } from "@/components/ThemedView";
 import { client, contract } from "@/constants/thirdweb";
 import { Link } from "expo-router";
 import { useState } from "react";
-import DocumentPicker from "react-native-document-picker";
+import DocumentPicker from "@react-native-documents/picker";
 import { balanceOf, claimTo, getNFT } from "thirdweb/extensions/erc721";
 import {
 	useActiveAccount,
@@ -162,7 +162,7 @@ function UploadSection() {
 						});
 						setUri(upload[0]);
 					} catch (err) {
-						if (DocumentPicker.isCancel(err)) {
+						if (DocumentPicker.isErrorWithCode(err)) {
 							console.log("User cancelled the picker");
 						} else {
 							throw err;

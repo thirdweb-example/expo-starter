@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import { ThirdwebProvider } from "thirdweb/react";
 
 import { useColorScheme } from "@/hooks/useColorScheme";
+import { StatusBar } from "react-native";
+import { Colors } from "../constants/Colors";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -33,6 +35,10 @@ export default function RootLayout() {
 	return (
 		<ThirdwebProvider>
 			<ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
+				<StatusBar
+					backgroundColor={Colors.dark.background}
+					barStyle="light-content"
+				/>
 				<Stack>
 					<Stack.Screen name="(tabs)" options={{ headerShown: false }} />
 					<Stack.Screen name="+not-found" />
