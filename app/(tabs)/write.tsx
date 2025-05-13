@@ -6,7 +6,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { client, contract } from "@/constants/thirdweb";
 import { Link } from "expo-router";
-import { useState } from "react";
 import { balanceOf, claimTo, getNFT } from "thirdweb/extensions/erc721";
 import {
 	useActiveAccount,
@@ -14,7 +13,6 @@ import {
 	useSendAndConfirmTransaction,
 } from "thirdweb/react";
 import { resolveScheme } from "thirdweb/storage";
-import { uploadMobile } from "thirdweb/storage";
 import { shortenAddress } from "thirdweb/utils";
 
 export default function WriteScreen() {
