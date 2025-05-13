@@ -6,8 +6,6 @@ import { ThemedText } from "@/components/ThemedText";
 import { ThemedView } from "@/components/ThemedView";
 import { client, contract } from "@/constants/thirdweb";
 import { Link } from "expo-router";
-import { useState } from "react";
-import DocumentPicker from "react-native-document-picker";
 import { balanceOf, claimTo, getNFT } from "thirdweb/extensions/erc721";
 import {
 	useActiveAccount,
@@ -15,7 +13,6 @@ import {
 	useSendAndConfirmTransaction,
 } from "thirdweb/react";
 import { resolveScheme } from "thirdweb/storage";
-import { uploadMobile } from "thirdweb/storage";
 import { shortenAddress } from "thirdweb/utils";
 
 export default function WriteScreen() {
@@ -40,7 +37,6 @@ export default function WriteScreen() {
 			</View>
 			<WriteSection />
 			<View style={{ height: 12 }} />
-			<UploadSection />
 		</ParallaxScrollView>
 	);
 }
@@ -125,60 +121,6 @@ function WriteSection() {
 					</ThemedText>
 				</>
 			)}
-		</>
-	);
-}
-
-function UploadSection() {
-	const [uri, setUri] = useState<string>();
-	return (
-		<>
-			<ThemedView style={styles.titleContainer}>
-				<ThemedText type="title">IPFS</ThemedText>
-			</ThemedView>
-			<View style={{ gap: 2 }}>
-				<ThemedText type="subtitle">uploadMobile()</ThemedText>
-				<ThemedText type="subtext">
-					Utility function to upload files to IPFS.
-				</ThemedText>
-			</View>
-			<ThemedButton
-				title="Upload File"
-				onPress={async () => {
-					try {
-						const res = await DocumentPicker.pick({
-							type: [DocumentPicker.types.allFiles],
-						});
-						const upload = await uploadMobile({
-							client,
-							files: [
-								{
-									name: res[0].name,
-									uri: res[0].uri,
-									type: res[0].type,
-								},
-							],
-							uploadWithoutDirectory: true,
-						});
-						setUri(upload[0]);
-					} catch (err) {
-						if (DocumentPicker.isCancel(err)) {
-							console.log("User cancelled the picker");
-						} else {
-							throw err;
-						}
-					}
-				}}
-			/>
-			<ThemedText
-				type="link"
-				onPress={() => {
-					if (!uri) return;
-					Linking.openURL(uri.replace("ipfs://", "https://ipfs.io/ipfs/"));
-				}}
-			>
-				{uri && `Uploaded ${uri.slice(0, 25)}...`}
-			</ThemedText>
 		</>
 	);
 }
