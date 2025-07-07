@@ -97,7 +97,7 @@ export default function HomeScreen() {
 				client={client}
 				theme={theme || "dark"}
 				wallets={wallets}
-				chain={baseSepolia}
+				chain={ethereum}
 			/>
 			<View style={{ gap: 2 }}>
 				<ThemedText type="subtitle">{`Themed <ConnectButton />`}</ThemedText>
@@ -107,6 +107,7 @@ export default function HomeScreen() {
 			</View>
 			<ConnectButton
 				client={client}
+				chain={ethereum}
 				theme={lightTheme({
 					colors: {
 						primaryButtonBg: "#1e8449",

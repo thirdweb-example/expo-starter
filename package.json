@@ -20,7 +20,7 @@
 		"@react-native-community/netinfo": "11.4.1",
 		"@react-navigation/native": "^7.1.6",
 		"@thirdweb-dev/react-native-adapter": "^1.5.4",
-		"@walletconnect/react-native-compat": "^2.20.1",
+		"@walletconnect/react-native-compat": "2.21.4",
 		"amazon-cognito-identity-js": "^6.3.15",
 		"ethers": "^6.13.7",
 		"expo": "53.0.9",
@@ -49,7 +49,7 @@
 		"react-native-screens": "4.10.0",
 		"react-native-svg": "15.11.2",
 		"react-native-web": "0.20.0",
-		"thirdweb": "5.96.7"
+		"thirdweb": "5.105.8"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.27.1",
