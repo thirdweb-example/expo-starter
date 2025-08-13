@@ -60,7 +60,7 @@
 		"react-native-tcp-socket": "6.3.0",
 		"react-native-web": "0.20.0",
 		"stream-browserify": "^3.0.0",
-		"thirdweb": "5.105.16",
+		"thirdweb": "^5.105.33",
 		"url": "^0.11.4",
 		"util": "^0.12.5"
 	},
